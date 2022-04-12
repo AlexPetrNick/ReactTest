@@ -1,0 +1,52 @@
+.wrapper_not_register {
+    width: 400px;
+    height: 420px;
+    border: 2px solid green;
+    background-color: rgba(41, 41, 41, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+.wrapper_form_auth {
+    height: 270px;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    justify-content: space-between;
+    color: green;
+    margin-top: -30px;
+}
+.text_auth {
+    font-size: 40px;
+    text-shadow: 1px 1px 10px white;
+}
+
+.psw_log_auth_inp{
+    height: 30px;
+}
+.btn_login {
+    height: 40px;
+    width: 150px;
+    align-self: center;
+    background-color: green;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+}
+.btn_login:hover {
+    border: 2px solid white;
+}
+
+.more_info {
+    height: 200px;
+    border: 2px solid red;
+}
+
+.link_registration {
+    align-self: center;
+    color: green;
+}

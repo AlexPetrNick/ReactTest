@@ -1,8 +1,47 @@
-import {FC} from "react";
+import {FC, MouseEvent, useEffect} from "react";
 import '../App.css'
+import {ListMenuGroup} from "./ListMenu/ListMenuGroup";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatchType, AppStateType} from "../redux/react-redux";
+import {ListMenuSetting} from "./ListMenu/ListMenuSetting";
+import {ListMenuFound} from "./ListMenu/ListMenuFound";
+import {listGroupFoundThunk, listUsersFoundThunk} from "../redux/thunk";
+import {setModeListAC} from "../redux/reducers/menuListReducer";
+import {DialogEmpty} from "./dialogComponent/dialogEmpty";
+import {DialogUser} from "./dialogComponent/dialogUser";
 
 
 export const MainContainer:FC = (props) => {
+    let stateList = useSelector((state:AppStateType) => state.menuListReducer)
+    let stateListDialog = useSelector((state:AppStateType) => state.DialogReducer)
+    const dispatch: AppDispatchType = useDispatch()
+    const dispatchAC = useDispatch()
+
+
+    const drawMenu = () => {
+        if (stateList.mode === "find") return <ListMenuFound />
+        if (stateList.mode === "menu") return <ListMenuSetting />
+        return <ListMenuGroup />
+    }
+
+    const drawDialog = () => {
+        if (stateListDialog.userInfo.username) return <DialogUser dialogInfo={stateListDialog} />
+        return <DialogEmpty />
+    }
+
+    const onClickButtonAddUser = (e:MouseEvent<HTMLButtonElement>) => {
+        console.log('click')
+        dispatch(listUsersFoundThunk())
+        dispatchAC(setModeListAC('find'))
+    }
+
+    const onClickButtonSeeGroup = (e:MouseEvent<HTMLButtonElement>) => {
+        dispatch(listGroupFoundThunk())
+        dispatchAC(setModeListAC('group'))
+    }
+
+
+
     return <div className={'wrapper_main'} >
         <div className="wrapper_left">
             <div className="user_info">
@@ -23,31 +62,18 @@ export const MainContainer:FC = (props) => {
                     id=""
                     placeholder={'Введите хотя бы 3 символа для поиска'}
                 />
+                {stateList.mode != 'find' ?
+                    <button className={'button_add_user'} onClick={onClickButtonAddUser}>+</button> :
+                    <button className={'button_add_user'} onClick={onClickButtonSeeGroup}> x</button>
+                }
             </div>
-            <div className="list_chats">
-                <div className="chat_short_in_list">
-                    <div className="avatar_list"></div>
-                    <div className="info_short_list">
-                        <div className="name_date_chat_short">
-                            <div className="name_chats"><b>Тестовый Текст</b></div>
-                            <div className="time_last_msg_short"><b>18:08</b></div>
-                        </div>
-                        <div className="last_msg_short_wr">
-                            <div className="last_msg_short">Это последний текст который был написан</div>
-                            <div className="icons_read"></div>
-                        </div>
-                    </div>
-                </div>
+            <div className="menu_user_list">
+                <button className='menu_user_list_btn'>Настройка</button>
             </div>
+            {drawMenu()}
         </div>
         <div className="wrapper_right">
-            <div className={'start_message'}>
-                <i>
-                    Пока не выбрано ни одного чата, чтобы начать общаться выберите чат
-                    или найдите знакомых через поиск
-                </i>
-            </div>
-
+            {drawDialog()}
 
         </div>
     </div>

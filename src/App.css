@@ -5,6 +5,7 @@ html, body {
   background-image: url('./static/image/back.jpg');
   justify-content: center;
   align-items: center;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
 
@@ -30,7 +31,7 @@ html, body {
 }
 
 .user_info {
-  min-height: 12%;
+  min-height: 15%;
   background-color: black;
   width: 100%;
   display: flex;
@@ -75,23 +76,50 @@ html, body {
 
 .find_block {
   min-height: 5%;
+  display: flex;
+  width: 100%;
 }
 
 .field_for_finding_text {
   background-color: rgba(223, 223, 223, 1);
-  width: 320px;
-  height: 26px;
+  width: 300px;
+  height: 25px;
   border-radius: 15px;
   margin-top: 5px;
+  margin-left: 5px;
   padding-left: 15px;
 }
 
+.menu_user_list {
+  margin-top: 10px;
+  max-height: 5%;
+}
+
+.menu_user_list_btn {
+  width: 340px;
+  height: 25px;
+  background-color: green;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+.menu_user_list_btn:hover {
+  box-shadow: 1px 1px 10px white;
+}
+
+.button_add_user {
+  margin-top: 5px;
+  margin-left: 5px;
+  height: 35px;
+  width: 35px;
+}
 
 .list_chats {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 80%;
+  min-height: 77%;
 }
 
 .chat_short_in_list {
@@ -155,13 +183,3 @@ html, body {
   min-height: 100%;
 }
 
-.start_message {
-  height: 800px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  white-space: break-spaces;
-  text-align: center;
-  text-shadow: 0px 1px 10px white;
-}

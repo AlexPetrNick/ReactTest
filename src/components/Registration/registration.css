@@ -1,0 +1,43 @@
+.wrapper_registration {
+    width: 500px;
+    height: 400px;
+    border:2px solid green;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+}
+
+.login_reg_label {
+}
+
+.psw_log_reg_inp {
+    width: 400px;
+    height: 30px;
+    font-size: 20px;
+}
+
+.psw_reg_lbl {
+
+}
+
+.psw_log_reg_inp {
+
+}
+
+.psw_reg_lbl_conf {
+
+}
+
+.message_error {
+    height: 30px;
+    color: red;
+}
+
+.form_registration {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 300px;
+}
