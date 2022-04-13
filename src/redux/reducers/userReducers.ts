@@ -3,12 +3,13 @@ import {
     authServer,
     dataUserRegistrationAuth,
 } from "../../DAL/authRequest";
-import {setAccessRefreshToken} from "../../Service/Localstorage";
+import {setAccessRefreshToken, setValueLocalStorage} from "../../Service/Localstorage";
 
 //action name
 export const SET_INIT_INFO_USER = 'SET_INIT_INFO_USER'
 export const SET_AUTH_USER = 'SET_AUTH_USER'
 export const SET_ERROR_MESSAGE_USER = 'SET_ERROR_MESSAGE_USER'
+export const SET_ROOMS = 'SET_ROOMS'
 
 
 //Action Creator
@@ -19,7 +20,12 @@ type setInitInfoUserACType = {
     firstName?: string
     lastName?: string
 }
-export const setInitInfoUserAC = (id:string, username:string, firstName?:string, lastName?:string):setInitInfoUserACType => ({
+export const setInitInfoUserAC = (
+    id:string,
+    username:string,
+    firstName?:string,
+    lastName?:string,
+):setInitInfoUserACType => ({
     type: SET_INIT_INFO_USER, id, username, firstName, lastName
 })
 
@@ -36,9 +42,21 @@ type setErrorMessageUserType = {
 
 export const setErrorMessageUser = (message: string):setErrorMessageUserType => ({type:SET_ERROR_MESSAGE_USER, message})
 
+type setRoomsType = {
+    type: typeof SET_ROOMS,
+    rooms: Array<string>
+}
+
+export const setRooms = (rooms: Array<string>):setRoomsType => ({
+    type: SET_ROOMS, rooms
+})
+
+
 export type actionTypeUserReducer = setInitInfoUserACType |
     setAuthUserType |
-    setErrorMessageUserType
+    setErrorMessageUserType |
+    setRoomsType
+
 
 
 //Reducer
@@ -48,8 +66,9 @@ export type initStateType = {
     username: string | null,
     firstName: string | null,
     lastName: string | null,
-    isAuth: boolean
-    errorText: string | null
+    isAuth: boolean,
+    errorText: string | null,
+    rooms?: Array<string>
 }
 
 const initState:initStateType = {
@@ -72,7 +91,7 @@ export const UserReducers = (state=initState, action:actionTypeUserReducer) => {
                 id: action.id,
                 username: action.username,
                 firstName: firstName,
-                lastName: lastName
+                lastName: lastName,
             }
         case SET_AUTH_USER:
             return {
@@ -83,6 +102,11 @@ export const UserReducers = (state=initState, action:actionTypeUserReducer) => {
             return  {
                 ...state,
                 errorText: action.message
+            }
+        case SET_ROOMS:
+            return {
+                ...state,
+                rooms: action.rooms
             }
     }
     return state

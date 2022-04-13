@@ -1,7 +1,13 @@
 import {authServer, dataUserRegistrationAuth} from "../DAL/authRequest";
 import {Dispatch} from "redux";
 import {setAccessRefreshToken} from "../Service/Localstorage";
-import {actionTypeUserReducer, setAuthUser, setErrorMessageUser, setInitInfoUserAC} from "./reducers/userReducers";
+import {
+    actionTypeUserReducer,
+    setAuthUser,
+    setErrorMessageUser,
+    setInitInfoUserAC,
+    setRooms
+} from "./reducers/userReducers";
 import {getListGroupFound, getListUsersFound} from "../DAL/menuRequest";
 import {
     actionMenuReducerType,
@@ -24,6 +30,9 @@ export const authUserThunk = (data:dataUserRegistrationAuth) => {
                     setAccessRefreshToken(data)
                     dispatch(setInitInfoUserAC(data.id, data.username))
                     dispatch(setAuthUser(true))
+                    if (data.nameRooms) {
+                        dispatch(setRooms(data.nameRooms))
+                    }
                 }
             })
             .catch(e => dispatch(setErrorMessageUser(e.message)))
@@ -66,7 +75,6 @@ export const sendDialogMsgThunk = (data:dataDialogSendMsg) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         sendMessageDialog(data)
             .then(data => {
-                console.log(data)
                 if (data['success'] !== 'ok') {
                     dispatch(setDialogError(data.message))
                 }

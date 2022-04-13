@@ -1,16 +1,19 @@
 import {FC} from "react";
 import './dialogStyle.css'
-import {stateDIalogReducerType, userInfoType} from "../../redux/reducers/dialogReducer";
+import {stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatchType, AppStateType} from "../../redux/react-redux";
 import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
 import {DialogItemUser} from "./dialogItem/dialogItemUser";
 import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import {authUserThunk, getDialogInfoThunk, listGroupFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
+import {getDialogInfoThunk, listGroupFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
+import {initStateType} from "../../redux/reducers/userReducers";
+
 
 type DialogUserType = {
-    dialogInfo: stateDIalogReducerType
+    dialogInfo: stateDIalogReducerType,
+    seeMessage: (idMessage:string) => void
 }
 type messageFormDialogType = {
     message: string
@@ -18,12 +21,13 @@ type messageFormDialogType = {
 
 
 export const DialogUser: FC<DialogUserType> = (props) => {
-    const userid = useSelector<AppStateType>(data => data.UserReducers.id)
+    const currUserInfo = useSelector<AppStateType, initStateType>(data => data.UserReducers)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo
     const messages = dialog.message
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
     const dispatch: AppDispatchType = useDispatch()
+
 
     const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
         dispatch(sendDialogMsgThunk({message: data.message, username:userInfo.username}))
@@ -35,10 +39,6 @@ export const DialogUser: FC<DialogUserType> = (props) => {
 
         setValue("message", '')
     }
-
-
-
-
 
     const drawName = () => {
         let name = userInfo.username
@@ -54,13 +54,17 @@ export const DialogUser: FC<DialogUserType> = (props) => {
 
     const drawMessage = () => {
         return messages?.map(mes => {
-            if (mes.userId === userid) {
+            if (mes.userId === currUserInfo.id) {
                 return (
                     <DialogItemUser message={mes}/>
                 )
             } else {
                 return (
-                    <DialogItemFriend message={mes}/>
+                    <DialogItemFriend
+                        seeMessage={props.seeMessage}
+                        message={mes}
+                        userid={currUserInfo.id}
+                    />
                 )
             }
         })

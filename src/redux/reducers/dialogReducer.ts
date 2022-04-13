@@ -2,6 +2,7 @@ export const SET_DIALOG = 'SET_DIALOG'
 export const CLEAR_DIALOG = 'CLEAR_DIALOG'
 export const SET_ERROR_DIALOG = 'SET_ERROR_DIALOG'
 export const SET_DIALOG_FROM_FOUND_USER = 'SET_DIALOG_FROM_FOUND_USER'
+export const SET_READ_MSG = 'SET_READ_MSG'
 
 //ACTION CREATOR
 
@@ -38,10 +39,20 @@ export const setDialogWindFromFound = (username: string): setDialogWindFromFound
     type: SET_DIALOG_FROM_FOUND_USER, username
 })
 
+type setReadMsgType = {
+    type: typeof SET_READ_MSG,
+    idMes: string
+    idUs: string
+}
+
+export const setReadMsg = (idMes:string, idUs:string):setReadMsgType => ({
+    type:SET_READ_MSG, idMes, idUs
+})
+
 //REDUCER
 
 export type messageType = {
-    id: string,
+    _id: string,
     userId: string,
     talkingGroupId: string,
     text: string,
@@ -79,7 +90,8 @@ export type stateDIalogReducerType = {
 
 export type actionDialogType = setDialogWindType |
     setDialogErrorType |
-    setDialogWindFromFoundType
+    setDialogWindFromFoundType |
+    setReadMsgType
 
 
 const initStateDialog = {
@@ -113,6 +125,15 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
                     username: action.username
                 }
             }
+        case SET_READ_MSG: {
+            const messageRead = state.message?.map((mes:messageType) => {
+                return mes._id === action.idMes ? {...mes, whoRead: [...mes.whoRead, action.idUs]} : mes
+            })
+            return {
+                ...state,
+                message: messageRead
+            }
+        }
     }
     return state
 }

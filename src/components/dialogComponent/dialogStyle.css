@@ -41,6 +41,7 @@
     background-color: rgba(214, 213, 213, 0.3);
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 .message_crud_dialog{
     height: 70px;
@@ -72,8 +73,9 @@
     border: 1px solid black;
     border-radius: 15px;
     max-width: 400px;
-    height: 60px;
-    margin-top: 15px;
+    min-height: 60px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
     font-size: 20px;
     display: flex;
     justify-content: space-between;
@@ -97,7 +99,7 @@
     border: 1px solid black;
     border-radius: 15px;
     max-width: 500px;
-    height: 60px;
+    min-height: 60px;
     margin-top: 15px;
     font-size: 20px;
     display: flex;
@@ -129,4 +131,8 @@
 .msg_not_dialog {
     font-size: 30px;
     color:white;
+}
+
+.unread {
+    box-shadow: 10px 5px 5px green;
 }

@@ -9,7 +9,6 @@ export const getInitData = () => {
         mode:"cors",
     })
         .then(data => data.json())
-        .then(data2 => console.log(data2))
 }
 
 export type dataUserRegistrationAuth = {

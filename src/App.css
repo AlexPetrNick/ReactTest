@@ -16,7 +16,7 @@ html, body {
   min-height: 850px;
   max-width: 1200px;
   max-height: 850px;
-  background-color: rgba(44, 43, 43, 0.85);
+  background-color: black;
   display: flex;
   justify-content: center;
 }

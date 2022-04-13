@@ -7,6 +7,7 @@ import {Registration} from "./components/Registration/Registration";
 import {WorkAreaComponent} from "./components/WorkAreaComponent";
 
 export const App = () => {
+
     return (
         <Router>
             <Provider store={store}>

@@ -1,4 +1,4 @@
-import {FC, MouseEvent, useEffect} from "react";
+import {FC, MouseEvent, useEffect, useRef, useState} from "react";
 import '../App.css'
 import {ListMenuGroup} from "./ListMenu/ListMenuGroup";
 import {useDispatch, useSelector} from "react-redux";
@@ -9,11 +9,15 @@ import {listGroupFoundThunk, listUsersFoundThunk} from "../redux/thunk";
 import {setModeListAC} from "../redux/reducers/menuListReducer";
 import {DialogEmpty} from "./dialogComponent/dialogEmpty";
 import {DialogUser} from "./dialogComponent/dialogUser";
+import {useChat} from "../socketio/useRoom";
+import {clearStorage} from "../Service/Localstorage";
 
 
 export const MainContainer:FC = (props) => {
-    let stateList = useSelector((state:AppStateType) => state.menuListReducer)
-    let stateListDialog = useSelector((state:AppStateType) => state.DialogReducer)
+    const stateList = useSelector((state:AppStateType) => state.menuListReducer)
+    const stateListDialog = useSelector((state:AppStateType) => state.DialogReducer)
+    const stateUser = useSelector((state:AppStateType) => state.UserReducers)
+    const {seeMessage} = useChat(stateUser.rooms, stateUser.id)
     const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
 
@@ -25,12 +29,11 @@ export const MainContainer:FC = (props) => {
     }
 
     const drawDialog = () => {
-        if (stateListDialog.userInfo.username) return <DialogUser dialogInfo={stateListDialog} />
+        if (stateListDialog.userInfo.username) return <DialogUser seeMessage={seeMessage} dialogInfo={stateListDialog} />
         return <DialogEmpty />
     }
 
     const onClickButtonAddUser = (e:MouseEvent<HTMLButtonElement>) => {
-        console.log('click')
         dispatch(listUsersFoundThunk())
         dispatchAC(setModeListAC('find'))
     }

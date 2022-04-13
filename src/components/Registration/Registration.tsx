@@ -23,7 +23,6 @@ export const Registration: FC = () => {
     const {register, handleSubmit, watch, setValue, formState: { errors }} = useForm<formValues>({shouldUseNativeValidation: true})
     const onSubmit: SubmitHandler<formValues> = (data) => {
         const { passwordRe, ...body} = data
-        console.log(body)
         registrationUserRequest(body)
         setValue("username", '')
         setValue("password", '')

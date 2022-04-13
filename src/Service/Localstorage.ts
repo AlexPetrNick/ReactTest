@@ -4,10 +4,15 @@ export const setValueLocalStorage = (key:string, value:string) => {
     localStorage.setItem(key, value)
 }
 
-export const getValueLocalStorage = (key:string):string | null => {
+export const getValueLocalStorage = (key:string):string|undefined => {
     const value = localStorage.getItem(key)
-    return value ? value : null
+    return value ? value : undefined
 }
+
+export const clearStorage = () => {
+    localStorage.clear()
+}
+
 
 type accessRefreshObject = {
     accessToken: string,
@@ -19,3 +24,5 @@ export const setAccessRefreshToken = (data:accessRefreshObject) => {
     setValueLocalStorage('access', accessToken)
     setValueLocalStorage('refresh', refreshToken)
 }
+
+
