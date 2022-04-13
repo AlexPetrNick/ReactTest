@@ -149,9 +149,10 @@ html, body {
 
 .info_short_list {
   width: 260px;
+  height: 70px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -161,6 +162,11 @@ html, body {
   display: flex;
   font-size: 14px;
   justify-content: space-between;
+}
+
+
+.name_chats {
+  font-size: 24px;
 }
 
 .last_msg_short_wr {

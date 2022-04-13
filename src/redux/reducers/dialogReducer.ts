@@ -1,6 +1,7 @@
 export const SET_DIALOG = 'SET_DIALOG'
 export const CLEAR_DIALOG = 'CLEAR_DIALOG'
 export const SET_ERROR_DIALOG = 'SET_ERROR_DIALOG'
+export const SET_DIALOG_FROM_FOUND_USER = 'SET_DIALOG_FROM_FOUND_USER'
 
 //ACTION CREATOR
 
@@ -25,6 +26,16 @@ type setDialogErrorType = {
 
 export const setDialogError = (error: string): setDialogErrorType => ({
     type: SET_ERROR_DIALOG, error
+})
+
+
+type setDialogWindFromFoundType = {
+    type: typeof SET_DIALOG_FROM_FOUND_USER,
+    username:string
+}
+
+export const setDialogWindFromFound = (username: string): setDialogWindFromFoundType => ({
+    type: SET_DIALOG_FROM_FOUND_USER, username
 })
 
 //REDUCER
@@ -67,7 +78,8 @@ export type stateDIalogReducerType = {
 }
 
 export type actionDialogType = setDialogWindType |
-    setDialogErrorType
+    setDialogErrorType |
+    setDialogWindFromFoundType
 
 
 const initStateDialog = {
@@ -92,6 +104,14 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
             return {
                 ...state,
                 error: action.error
+            }
+        case SET_DIALOG_FROM_FOUND_USER:
+            return {
+                ...state,
+                userInfo: {
+                    ...state.userInfo,
+                    username: action.username
+                }
             }
     }
     return state

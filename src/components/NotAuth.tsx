@@ -49,8 +49,8 @@ export const NotAuth:FC = (props) => {
                             message: "Это поле обязательно для заполнения"
                         },
                         minLength: {
-                        value: 5,
-                        message: "Минимум 5 символов"
+                        value: 4,
+                        message: "Минимум 4 символов"
                     }
                     })}
                     placeholder={'Введите логин'}

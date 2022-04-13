@@ -8,8 +8,6 @@ import {getListUserFoundType} from "../../redux/reducers/menuListReducer";
 
 export const ListMenuFound: FC = () => {
     let stateList = useSelector((state: AppStateType) => state.menuListReducer)
-    console.log(stateList)
-
 
     const listFoundUser = stateList.usersFound?.map((us: getListUserFoundType) => {
         return (

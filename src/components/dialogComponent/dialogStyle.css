@@ -117,3 +117,16 @@
     font-size: 13px;
     margin-right: 10px;
 }
+
+.wrapper_not_messages {
+    height: 690px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.msg_not_dialog {
+    font-size: 30px;
+    color:white;
+}

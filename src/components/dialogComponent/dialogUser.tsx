@@ -1,20 +1,44 @@
 import {FC} from "react";
 import './dialogStyle.css'
 import {stateDIalogReducerType, userInfoType} from "../../redux/reducers/dialogReducer";
-import {useSelector} from "react-redux";
-import {AppStateType} from "../../redux/react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatchType, AppStateType} from "../../redux/react-redux";
 import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
 import {DialogItemUser} from "./dialogItem/dialogItemUser";
+import {NotMessages} from "./notMessages/NotMessages";
+import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
+import {authUserThunk, getDialogInfoThunk, listGroupFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
 
 type DialogUserType = {
-    dialogInfo:stateDIalogReducerType
+    dialogInfo: stateDIalogReducerType
+}
+type messageFormDialogType = {
+    message: string
 }
 
-export const DialogUser:FC<DialogUserType> = (props) => {
+
+export const DialogUser: FC<DialogUserType> = (props) => {
     const userid = useSelector<AppStateType>(data => data.UserReducers.id)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo
     const messages = dialog.message
+    const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
+    const dispatch: AppDispatchType = useDispatch()
+
+    const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
+        dispatch(sendDialogMsgThunk({message: data.message, username:userInfo.username}))
+        dispatch(getDialogInfoThunk(userInfo.username))
+        setTimeout(() => {
+            dispatch(listGroupFoundThunk())
+        }, 100)
+
+
+        setValue("message", '')
+    }
+
+
+
+
 
     const drawName = () => {
         let name = userInfo.username
@@ -30,8 +54,6 @@ export const DialogUser:FC<DialogUserType> = (props) => {
 
     const drawMessage = () => {
         return messages?.map(mes => {
-            console.log(mes.userId)
-            console.log(userid)
             if (mes.userId === userid) {
                 return (
                     <DialogItemUser message={mes}/>
@@ -42,7 +64,6 @@ export const DialogUser:FC<DialogUserType> = (props) => {
                 )
             }
         })
-
     }
 
 
@@ -54,13 +75,18 @@ export const DialogUser:FC<DialogUserType> = (props) => {
                     <button>Menu</button>
                 </div>
             </div>
-            <div className="content_dialog">
-                {drawMessage()}
-            </div>
+            {messages ?
+                <div className="content_dialog">{drawMessage()}</div> :
+                <NotMessages />
+            }
             <div className="message_crud_dialog">
-                <form className="form_dialog">
-                    <input className="text_enter_dialog" />
-                    <input type={'submit'} className="btn_send_msg_dia" />
+                <form className="form_dialog" onSubmit={handleSubmit(onSubmitForm)}>
+                    <input
+                        {...register('message')}
+                        type="text"
+                        className="text_enter_dialog"
+                    />
+                    <input type={'submit'} className="btn_send_msg_dia"/>
                 </form>
             </div>
         </div>

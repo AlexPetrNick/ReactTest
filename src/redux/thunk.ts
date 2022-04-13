@@ -11,7 +11,7 @@ import {
 } from "./reducers/menuListReducer";
 import {actionDialogType, setDialogError, setDialogWind} from "./reducers/dialogReducer";
 import {userInfo} from "os";
-import {getTalkingGroupInfo} from "../DAL/dialogsRequest";
+import {dataDialogSendMsg, getTalkingGroupInfo, sendMessageDialog} from "../DAL/dialogsRequest";
 
 
 export const authUserThunk = (data:dataUserRegistrationAuth) => {
@@ -52,11 +52,24 @@ export const listGroupFoundThunk = () => {
     }
 }
 
-export const getDialogInfoThunk = (user:string) => {
+export const getDialogInfoThunk = (user:string|null) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         getTalkingGroupInfo(user)
             .then(data => {
                 dispatch(setDialogWind(data.userQuery, data.group, data.messages))
+            })
+            .catch(e => dispatch(setDialogError(e.message)))
+    }
+}
+
+export const sendDialogMsgThunk = (data:dataDialogSendMsg) => {
+    return (dispatch: Dispatch<actionDialogType>) => {
+        sendMessageDialog(data)
+            .then(data => {
+                console.log(data)
+                if (data['success'] !== 'ok') {
+                    dispatch(setDialogError(data.message))
+                }
             })
             .catch(e => dispatch(setDialogError(e.message)))
     }
