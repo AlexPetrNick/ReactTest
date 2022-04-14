@@ -7,18 +7,15 @@ import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
 import {DialogItemUser} from "./dialogItem/dialogItemUser";
 import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import {getDialogInfoThunk, listGroupFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
+import {getDialogInfoThunk, listGroupFoundThunk, listUsersFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
 import {initStateType} from "../../redux/reducers/userReducers";
 
 
 type DialogUserType = {
     dialogInfo: stateDIalogReducerType,
     seeMessage: (idMessage:string) => void
+    sendMessage: (id:string, message:string, room:string) => void
 }
-type messageFormDialogType = {
-    message: string
-}
-
 
 export const DialogUser: FC<DialogUserType> = (props) => {
     const currUserInfo = useSelector<AppStateType, initStateType>(data => data.UserReducers)
@@ -28,13 +25,19 @@ export const DialogUser: FC<DialogUserType> = (props) => {
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
     const dispatch: AppDispatchType = useDispatch()
 
-
+    console.log(userInfo)
     const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
-        dispatch(sendDialogMsgThunk({message: data.message, username:userInfo.username}))
-        dispatch(getDialogInfoThunk(userInfo.username))
-        setTimeout(() => {
-            dispatch(listGroupFoundThunk())
-        }, 100)
+        props.sendMessage(
+            userInfo._id ? userInfo._id : '',
+            data.message,
+            dialog.groupInfo?.name ? dialog.groupInfo.name : '')
+
+        // dispatch(sendDialogMsgThunk({message: data.message, username:userInfo.username}))
+        //
+        // setTimeout(() => {
+        //     dispatch(getDialogInfoThunk(userInfo.username))
+        //     dispatch(listUsersFoundThunk())
+        // }, 100)
 
 
         setValue("message", '')

@@ -1,10 +1,29 @@
 export const SET_DIALOG = 'SET_DIALOG'
-export const CLEAR_DIALOG = 'CLEAR_DIALOG'
 export const SET_ERROR_DIALOG = 'SET_ERROR_DIALOG'
 export const SET_DIALOG_FROM_FOUND_USER = 'SET_DIALOG_FROM_FOUND_USER'
 export const SET_READ_MSG = 'SET_READ_MSG'
+export const SET_DEFAULT_STATE = 'SET_DEFAULT_STATE'
+export const ADD_MESSAGE_AFTER_EVENT = 'ADD_MESSAGE_AFTER_EVENT'
 
 //ACTION CREATOR
+
+type addMsgAfterEventType = {
+    type: typeof ADD_MESSAGE_AFTER_EVENT,
+    msg: messageType,
+}
+
+export const addMsgAfterEvent = (msg: messageType):addMsgAfterEventType => ({
+    type: ADD_MESSAGE_AFTER_EVENT, msg
+})
+
+
+type setDefaultStateType = {
+    type: typeof SET_DEFAULT_STATE
+}
+
+export const setDefaultState = () => ({
+    type: SET_DEFAULT_STATE
+})
 
 type setDialogWindType = {
     type: typeof SET_DIALOG,
@@ -74,7 +93,7 @@ export type groupInfoType = {
 }
 
 export type userInfoType = {
-    id?: string,
+    _id?: string,
     username: string | null,
     email?: string,
     firstName?: string,
@@ -91,7 +110,9 @@ export type stateDIalogReducerType = {
 export type actionDialogType = setDialogWindType |
     setDialogErrorType |
     setDialogWindFromFoundType |
-    setReadMsgType
+    setReadMsgType |
+    setDefaultStateType |
+    addMsgAfterEventType
 
 
 const initStateDialog = {
@@ -132,6 +153,20 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
             return {
                 ...state,
                 message: messageRead
+            }
+        }
+        case SET_DEFAULT_STATE: {
+            return {
+                ...initStateDialog
+            }
+        }
+        case ADD_MESSAGE_AFTER_EVENT: {
+            console.log(action)
+            const newArrayMsg = state.message?.map(a => a)
+            newArrayMsg?.push(action.msg)
+            return {
+                ...state,
+                message: newArrayMsg
             }
         }
     }

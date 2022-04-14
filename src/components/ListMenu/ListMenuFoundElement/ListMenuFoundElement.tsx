@@ -2,7 +2,7 @@ import {FC, MouseEvent} from "react";
 import './elementfoundmenu.css'
 import {useDispatch} from "react-redux";
 import {getDialogInfoThunk} from "../../../redux/thunk";
-import {setDialogWindFromFound} from "../../../redux/reducers/dialogReducer";
+import {setDefaultState, setDialogWindFromFound} from "../../../redux/reducers/dialogReducer";
 type FoundElementType = {
     username: string,
     firstName?: string,
@@ -17,6 +17,7 @@ export const ListMenuFoundElement: FC<FoundElementType> = ({
     const dispatchAC = useDispatch()
 
     const onClickList = (e:MouseEvent<HTMLDivElement>) => {
+        dispatchAC(setDefaultState())
         dispatchAC(setDialogWindFromFound(username))
     }
 

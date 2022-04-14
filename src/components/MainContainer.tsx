@@ -17,7 +17,7 @@ export const MainContainer:FC = (props) => {
     const stateList = useSelector((state:AppStateType) => state.menuListReducer)
     const stateListDialog = useSelector((state:AppStateType) => state.DialogReducer)
     const stateUser = useSelector((state:AppStateType) => state.UserReducers)
-    const {seeMessage} = useChat(stateUser.rooms, stateUser.id)
+    const {seeMessage, sendMessageEvent, test1} = useChat(stateUser.rooms, stateUser.id)
     const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
 
@@ -29,7 +29,14 @@ export const MainContainer:FC = (props) => {
     }
 
     const drawDialog = () => {
-        if (stateListDialog.userInfo.username) return <DialogUser seeMessage={seeMessage} dialogInfo={stateListDialog} />
+        console.log(stateListDialog)
+        if (stateListDialog.userInfo.username) {
+            return <DialogUser
+                seeMessage={seeMessage}
+                sendMessage={sendMessageEvent}
+                dialogInfo={stateListDialog}
+            />
+        }
         return <DialogEmpty />
     }
 
@@ -47,7 +54,9 @@ export const MainContainer:FC = (props) => {
 
     return <div className={'wrapper_main'} >
         <div className="wrapper_left">
-            <div className="user_info">
+            <div className="user_info"
+            onClick={() => test1()}
+            >
                 <div className="wrapper_user_info">
                     <div className="avatar_user"></div>
                     <div className="data_user">

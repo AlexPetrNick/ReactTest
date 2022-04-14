@@ -3,8 +3,19 @@ export const SET_LIST_USER = 'SET_LIST_USER'
 export const SET_ERROR_USERS_LIST_FOUND = 'SET_ERROR_USERS_LIST_FOUND'
 export const SET_MODE_MENU_LIST = 'SET_MODE_MENU_LIST'
 export const SET_GROUP_MENU_LIST = 'SET_GROUP_MENU_LIST'
+export const UPDATE_MSG_FROM_USER = 'UPDATE_MSG_FROM_USER'
 
 // Action creator
+
+type updateMsgFromUserType = {
+    type: typeof UPDATE_MSG_FROM_USER,
+    id:string,
+    talking:talkingLastMsgType
+}
+
+export const updateMsgFromUser = (id:string, talking:talkingLastMsgType):updateMsgFromUserType => ({
+    type: UPDATE_MSG_FROM_USER, id, talking
+})
 
 export type setListUserACType = {
     type: typeof SET_LIST_USER
@@ -50,24 +61,27 @@ export type getListUserFoundType = {
     lastName: string
 }
 
+type talkingLastMsgType = {
+    id: string,
+    userId: string,
+    talkingGroupId: string,
+    text: string,
+    prevText: string | null,
+    cntLike: number,
+    cntWatch: number,
+    "whoRead": string[],
+    "createDate": string,
+}
+
 export type getListGroupFoundType = {
     friend: {
+        id?:string,
         username: string,
         email?: string,
         firstName?: string,
         lastName?: string
     },
-    talking: {
-        id: string,
-        userId: string,
-        talkingGroupId: string,
-        text: string,
-        prevText: string | null,
-        cntLike: number,
-        cntWatch: number,
-        "whoRead": string[],
-        "createDate": string,
-    }
+    talking: talkingLastMsgType
 }
 
 type modeMenu = "group" | "menu" | "find"
@@ -91,7 +105,9 @@ const initTypeMenuListReducer:menuListReducerType = {
 export type actionMenuReducerType = setListUserACType |
     setErrorUsersListFoundACType |
     setModeListType |
-    setGroupMenuListType
+    setGroupMenuListType |
+    updateMsgFromUserType
+
 
 
 export const menuListReducer = (state: menuListReducerType = initTypeMenuListReducer, action: actionMenuReducerType): menuListReducerType => {
@@ -117,6 +133,18 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             return {
                 ...state,
                 groupList: [...action.groupList]
+            }
+        }
+        case UPDATE_MSG_FROM_USER: {
+            return {
+                ...state,
+                groupList: state.groupList?.map((elem:getListGroupFoundType) => {
+                    return elem.friend.id === action.id ? {
+                        ...elem,
+                        talking: action.talking
+                    } : elem
+                })
+
             }
         }
     }
