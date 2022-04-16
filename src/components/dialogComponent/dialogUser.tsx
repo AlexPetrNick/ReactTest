@@ -1,4 +1,4 @@
-import {FC} from "react";
+import {FC, useLayoutEffect, useRef} from "react";
 import './dialogStyle.css'
 import {stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -9,39 +9,53 @@ import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {getDialogInfoThunk, listGroupFoundThunk, listUsersFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
 import {initStateType} from "../../redux/reducers/userReducers";
+import {getListUserFoundType} from "../../redux/reducers/menuListReducer";
 
 
 type DialogUserType = {
     dialogInfo: stateDIalogReducerType,
     seeMessage: (idMessage:string) => void
-    sendMessage: (id:string, message:string, room:string) => void
+    sendMessage: (id:string, message:string, room:string, curId:string) => void
 }
 
 export const DialogUser: FC<DialogUserType> = (props) => {
     const currUserInfo = useSelector<AppStateType, initStateType>(data => data.UserReducers)
+    const foundUser = useSelector<AppStateType, getListUserFoundType[] | undefined >(data => data.menuListReducer.usersFound)
+    const overFlow = useRef<HTMLDivElement>(null)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo
     const messages = dialog.message
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
     const dispatch: AppDispatchType = useDispatch()
 
-    console.log(userInfo)
+
+    console.log(foundUser)
+    console.log(dialog)
+    console.log(currUserInfo.id)
     const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
+        const getUserId = userInfo._id ?
+            userInfo._id :
+            foundUser?.filter(us => us.username === userInfo.username)[0]['id']
         props.sendMessage(
-            userInfo._id ? userInfo._id : '',
+            getUserId ? getUserId : '',
             data.message,
-            dialog.groupInfo?.name ? dialog.groupInfo.name : '')
-
-        // dispatch(sendDialogMsgThunk({message: data.message, username:userInfo.username}))
-        //
-        // setTimeout(() => {
-        //     dispatch(getDialogInfoThunk(userInfo.username))
-        //     dispatch(listUsersFoundThunk())
-        // }, 100)
-
-
+            dialog.groupInfo?.name ? dialog.groupInfo.name : '',
+            currUserInfo.id ? currUserInfo.id : ''
+        )
         setValue("message", '')
     }
+
+    useLayoutEffect(() => {
+        console.log(overFlow.current)
+        const scrollOptions:ScrollToOptions = {
+            left: 0,
+            top: 10000000,
+            behavior: 'auto'
+        }
+        overFlow.current?.scrollTo(scrollOptions)
+    })
+
+
 
     const drawName = () => {
         let name = userInfo.username
@@ -83,7 +97,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
                 </div>
             </div>
             {messages ?
-                <div className="content_dialog">{drawMessage()}</div> :
+                <div ref={overFlow} className="content_dialog">{drawMessage()}</div> :
                 <NotMessages />
             }
             <div className="message_crud_dialog">

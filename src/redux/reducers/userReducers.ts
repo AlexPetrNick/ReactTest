@@ -84,6 +84,7 @@ const initState:initStateType = {
 export const UserReducers = (state=initState, action:actionTypeUserReducer) => {
     switch (action.type) {
         case SET_INIT_INFO_USER:
+            console.log(action)
             const firstName = action.firstName ? action.firstName : null
             const lastName = action.lastName ? action.lastName : null
             return {

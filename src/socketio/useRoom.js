@@ -3,33 +3,35 @@ import {io} from "socket.io-client";
 import {useDispatch} from "react-redux";
 import {addMsgAfterEvent, messageType, setReadMsg} from "../redux/reducers/dialogReducer";
 import {updateMsgFromUser} from "../redux/reducers/menuListReducer";
+import {getRoomsSocketIo} from "../DAL/authRequest";
 
 
 const SERVER_URL = 'http://localhost:3000'
 
 
 export const useChat = (roomId, idUser) => {
-    const [rooms, setRooms] = useState([])
-    const [messages, setMessages] = useState('')
     const dispatchAC = useDispatch()
-
-    const id = idUser
-    const username = 'admin'
 
     const socketRef = useRef(null)
 
 
     useEffect(() => {
         socketRef.current = io(SERVER_URL, {
-            query: {roomId, id}
+            query: {idUser}
         })
 
+
+        getRoomsSocketIo()
+            .then(data => {
+                data.nameRooms.forEach(room => {
+                    socketRef.current.emit('joinRoom', room)
+                })
+            })
 
         socketRef.current.on('msg:read', (arg) => {
-            dispatchAC(setReadMsg(arg, id))
+            dispatchAC(setReadMsg(arg, idUser))
         })
-
-        socketRef.current.on('msg:newcreate', (id, senderId, talkId, msg, getId) => {
+        socketRef.current.on('msg:newcr', (id, senderId, talkId, msg, getId) => {
             const newMsg = {
                 _id: id,
                 userId: senderId,
@@ -39,9 +41,10 @@ export const useChat = (roomId, idUser) => {
                 cntLike: 0,
                 cntWatch: 0,
                 whoRead: [id],
-                createDate: String(new Date()),
+                createDate: new Date().toISOString(),
                 "__v": 0
             }
+            console.log(newMsg)
             const { __v, ...msgList} = newMsg
             dispatchAC(addMsgAfterEvent(newMsg))
             dispatchAC(updateMsgFromUser(getId, msgList))
@@ -49,29 +52,28 @@ export const useChat = (roomId, idUser) => {
 
 
         socketRef.current.on('test2', (a) => {
+            console.log('from server')
             console.log(a)
+        })
+
+        socketRef.current.on('hi:user', (a) => {
+            console.log(`New user ${a}`)
         })
 
         return () => {
             socketRef.current.disconnect()
         }
-    }, [roomId, id, username])
+    }, [roomId, idUser])
 
-    const sendMessageEvent = (id, message, room) => {
-        console.log('there')
-        socketRef.current.emit('msg:new', id, message, room)
+    const sendMessageEvent = (id, message, room, curId) => {
+        socketRef.current.emit('msg:new', id, message, room, curId)
+
+    }
+
+    const seeMessage = (idMessage, curId) => {
+        socketRef.current.emit('msg:see', idMessage, curId)
     }
 
 
-    const seeMessage = (idMessage) => {
-        setMessages(idMessage)
-        socketRef.current.emit('msg:see', idMessage)
-    }
-
-    const test1 = () => {
-        console.log('in')
-        socketRef.current.emit('test1', 'из 1 во 2')
-    }
-
-    return {seeMessage, sendMessageEvent, test1}
+    return {seeMessage, sendMessageEvent}
 }

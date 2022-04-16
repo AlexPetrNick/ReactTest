@@ -1,7 +1,12 @@
 import {setting} from "../config/config";
+import {getValueLocalStorage} from "../Service/Localstorage";
 
 
 const {serverDns, ...data} = setting
+
+
+const token = getValueLocalStorage('access')
+const bearer = `Bearer ${token}`
 
 
 export const getInitData = () => {
@@ -42,4 +47,16 @@ export const authServer = (data: dataUserRegistrationAuth) => {
     })
         .then(data => data.json())
 
+}
+
+
+export const getRoomsSocketIo = () => {
+    return fetch(`${serverDns}/auth/get-rooms/`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': bearer
+        },
+        mode:"cors",
+    })
+        .then(data => data.json())
 }

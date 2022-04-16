@@ -55,6 +55,7 @@ export const setGroupMenuList = (groupList: getListGroupFoundType[]):setGroupMen
 
 // Reducer
 export type getListUserFoundType = {
+    id: string,
     username: string,
     email: string,
     firstName: string,

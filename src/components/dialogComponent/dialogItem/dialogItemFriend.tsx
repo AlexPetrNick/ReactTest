@@ -6,7 +6,7 @@ import {getValueLocalStorage} from "../../../Service/Localstorage";
 
 type DialogItemUserType = {
     message: messageType
-    seeMessage: (idMessage:string) => void
+    seeMessage: (idMessage:string, curId: string) => void
     userid: string | null
 }
 
@@ -26,7 +26,7 @@ export const DialogItemFriend:FC<DialogItemUserType> = (props) => {
             <div className="text_dial_fr">{props.message.text}</div>
             <div
                 className="time_msg_fr"
-                onMouseEnter={!readMess ? () => {props.seeMessage(props.message._id)} : undefined}
+                onMouseEnter={!readMess ? () => {props.seeMessage(props.message._id, idCheck)} : undefined}
             >{data}</div>
         </div>
 

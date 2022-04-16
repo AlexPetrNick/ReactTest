@@ -27,6 +27,7 @@ export const authUserThunk = (data:dataUserRegistrationAuth) => {
                 if (data.message) {
                     dispatch(setErrorMessageUser(data.message))
                 } else {
+                    console.log(data)
                     setAccessRefreshToken(data)
                     dispatch(setInitInfoUserAC(data.id, data.username))
                     dispatch(setAuthUser(true))
