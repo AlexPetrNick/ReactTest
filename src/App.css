@@ -119,14 +119,14 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 77%;
+  min-height: 91%;
+  background-color: rgba(230, 230, 230, 0.4);
 }
 
 .chat_short_in_list {
   height: 80px;
   margin-top: 3px;
-  width: 360px;
-  background-color: black;
+  width: 370px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -137,6 +137,10 @@ html, body {
 }
 .chat_short_in_list:focus {
   background-color: rgba(30, 109, 30, 1);
+}
+
+.selected_user {
+  background-color: rgba(7, 133, 0, 0.47);
 }
 
 .avatar_list {

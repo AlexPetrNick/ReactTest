@@ -4,8 +4,18 @@ export const SET_ERROR_USERS_LIST_FOUND = 'SET_ERROR_USERS_LIST_FOUND'
 export const SET_MODE_MENU_LIST = 'SET_MODE_MENU_LIST'
 export const SET_GROUP_MENU_LIST = 'SET_GROUP_MENU_LIST'
 export const UPDATE_MSG_FROM_USER = 'UPDATE_MSG_FROM_USER'
+export const SELECT_USER = 'SELECT_USER'
 
 // Action creator
+
+type selectUserType = {
+    type: typeof SELECT_USER,
+    id: string
+}
+
+export const selectUser = (id:string):selectUserType => ({
+    type: SELECT_USER, id
+})
 
 type updateMsgFromUserType = {
     type: typeof UPDATE_MSG_FROM_USER,
@@ -76,7 +86,7 @@ type talkingLastMsgType = {
 
 export type getListGroupFoundType = {
     friend: {
-        id?:string,
+        id:string,
         username: string,
         email?: string,
         firstName?: string,
@@ -93,6 +103,7 @@ export type menuListReducerType = {
     menuUser?: Array<any>,
     groupList?: Array<getListGroupFoundType>,
     errors: Array<string>
+    selectedUser?: string
 }
 
 const initTypeMenuListReducer:menuListReducerType = {
@@ -100,14 +111,16 @@ const initTypeMenuListReducer:menuListReducerType = {
     usersFound: undefined,
     menuUser: undefined,
     groupList: undefined,
-    errors: []
+    errors: [],
+    selectedUser: undefined
 }
 
 export type actionMenuReducerType = setListUserACType |
     setErrorUsersListFoundACType |
     setModeListType |
     setGroupMenuListType |
-    updateMsgFromUserType
+    updateMsgFromUserType |
+    selectUserType
 
 
 
@@ -146,6 +159,12 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
                     } : elem
                 })
 
+            }
+        }
+        case SELECT_USER: {
+            return {
+                ...state,
+                selectedUser: action.id
             }
         }
     }

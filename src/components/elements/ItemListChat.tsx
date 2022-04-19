@@ -2,11 +2,14 @@ import {FC, MouseEvent} from "react";
 import '../../App.css'
 import {useDispatch} from "react-redux";
 import {getDialogInfoThunk} from "../../redux/thunk";
+import {selectUser} from "../../redux/reducers/menuListReducer";
 
 type ItemListChatType = {
+    id: string,
     username: string,
     dateLastMessage: string,
-    lastMessage: string
+    lastMessage: string,
+    selectedUser?: string
 }
 
 export const ItemListChat: FC<ItemListChatType> = (props) => {
@@ -14,10 +17,13 @@ export const ItemListChat: FC<ItemListChatType> = (props) => {
 
     const onClickList = (e:MouseEvent<HTMLDivElement>) => {
         dispatchAC(getDialogInfoThunk(props.username))
+        dispatchAC(selectUser(props.id))
     }
 
+    const style = props.selectedUser ? "chat_short_in_list selected_user" : "chat_short_in_list"
+
     return (
-        <div className="chat_short_in_list" onClick={onClickList}>
+        <div className={style} onClick={onClickList}>
             <div className="avatar_list"> </div>
             <div className="info_short_list">
                 <div className="name_date_chat_short">

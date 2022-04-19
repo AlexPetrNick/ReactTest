@@ -44,7 +44,6 @@ export const useChat = (roomId, idUser) => {
                 createDate: new Date().toISOString(),
                 "__v": 0
             }
-            console.log(newMsg)
             const { __v, ...msgList} = newMsg
             dispatchAC(addMsgAfterEvent(newMsg))
             dispatchAC(updateMsgFromUser(getId, msgList))
@@ -53,7 +52,6 @@ export const useChat = (roomId, idUser) => {
 
         socketRef.current.on('test2', (a) => {
             console.log('from server')
-            console.log(a)
         })
 
         socketRef.current.on('hi:user', (a) => {

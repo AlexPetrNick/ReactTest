@@ -1,0 +1,35 @@
+.wrapper_top_menu {
+    display: flex;
+    justify-content: space-between;
+    width: 350px;
+    height: 100px;
+    color: white;
+}
+
+.burger_icon {
+    display: flex;
+    flex-direction: column;
+    width: 50px;
+    height: 50px;
+}
+
+.elem_burger {
+    color: white;
+    max-height: 10px;
+    font-size: 55px;
+    margin-bottom: 5px;
+}
+
+.elem_burger_close_one {
+    color: white;
+    height: 10px;
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+.username_top {
+    margin-right: 220px;
+    margin-top: 24px;
+    font-size: 24px;
+}
+

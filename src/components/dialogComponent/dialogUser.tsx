@@ -9,7 +9,7 @@ import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {getDialogInfoThunk, listGroupFoundThunk, listUsersFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
 import {initStateType} from "../../redux/reducers/userReducers";
-import {getListUserFoundType} from "../../redux/reducers/menuListReducer";
+import {getListUserFoundType, selectUser, setModeListAC} from "../../redux/reducers/menuListReducer";
 
 
 type DialogUserType = {
@@ -27,15 +27,12 @@ export const DialogUser: FC<DialogUserType> = (props) => {
     const messages = dialog.message
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
     const dispatch: AppDispatchType = useDispatch()
+    const dispatchAC = useDispatch()
 
-
-    console.log(foundUser)
-    console.log(dialog)
-    console.log(currUserInfo.id)
+    const getUserId = userInfo._id ?
+        userInfo._id :
+        foundUser?.filter(us => us.username === userInfo.username)[0]['id']
     const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
-        const getUserId = userInfo._id ?
-            userInfo._id :
-            foundUser?.filter(us => us.username === userInfo.username)[0]['id']
         props.sendMessage(
             getUserId ? getUserId : '',
             data.message,
@@ -43,10 +40,13 @@ export const DialogUser: FC<DialogUserType> = (props) => {
             currUserInfo.id ? currUserInfo.id : ''
         )
         setValue("message", '')
+        dispatchAC(setModeListAC("group"))
+        dispatchAC(selectUser(getUserId ? getUserId : ''))
+        dispatchAC(getDialogInfoThunk(userInfo.username))
+
     }
 
     useLayoutEffect(() => {
-        console.log(overFlow.current)
         const scrollOptions:ScrollToOptions = {
             left: 0,
             top: 10000000,

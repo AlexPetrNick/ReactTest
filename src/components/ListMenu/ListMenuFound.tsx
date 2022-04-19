@@ -1,13 +1,21 @@
 import {ItemListChat} from "../elements/ItemListChat";
-import {FC} from "react";
-import {useSelector} from "react-redux";
-import {AppStateType} from "../../redux/react-redux";
+import {FC, useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatchType, AppStateType} from "../../redux/react-redux";
 import {ListMenuFoundElement} from "./ListMenuFoundElement/ListMenuFoundElement";
 import {getListUserFoundType} from "../../redux/reducers/menuListReducer";
+import {listUsersFoundThunk} from "../../redux/thunk";
 
 
 export const ListMenuFound: FC = () => {
     let stateList = useSelector((state: AppStateType) => state.menuListReducer)
+    const dispatch: AppDispatchType = useDispatch()
+    const dispatchAC = useDispatch()
+
+
+    useEffect(() => {
+        dispatch(listUsersFoundThunk())
+    }, [])
 
     const listFoundUser = stateList.usersFound?.map((us: getListUserFoundType) => {
         return (

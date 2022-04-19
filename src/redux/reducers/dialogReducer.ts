@@ -161,7 +161,6 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
             }
         }
         case ADD_MESSAGE_AFTER_EVENT: {
-            console.log(action)
             const newArrayMsg = state.message?.map(a => a)
             newArrayMsg?.push(action.msg)
             return {

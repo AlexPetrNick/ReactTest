@@ -27,7 +27,6 @@ export const authUserThunk = (data:dataUserRegistrationAuth) => {
                 if (data.message) {
                     dispatch(setErrorMessageUser(data.message))
                 } else {
-                    console.log(data)
                     setAccessRefreshToken(data)
                     dispatch(setInitInfoUserAC(data.id, data.username))
                     dispatch(setAuthUser(true))
@@ -56,7 +55,6 @@ export const listGroupFoundThunk = () => {
     return (dispatch: Dispatch<actionMenuReducerType>) => {
         getListGroupFound()
             .then(data => {
-                console.log(data)
                 dispatch(setGroupMenuList(data.dataGroup))
             })
             .catch(e => dispatch(setErrorUsersListFoundAC(e.message)))
@@ -67,7 +65,6 @@ export const getDialogInfoThunk = (user:string|null) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         getTalkingGroupInfo(user)
             .then(data => {
-                console.log(data)
                 dispatch(setDialogWind(data.userQuery, data.group[0], data.messages))
             })
             .catch(e => dispatch(setDialogError(e.message)))
