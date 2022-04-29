@@ -4,10 +4,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {FC, MouseEvent, useEffect} from "react";
 import {setModeListAC} from "../../../redux/reducers/menuListReducer";
 import {listUsersFoundThunk} from "../../../redux/thunk";
+import {initStateType} from "../../../redux/reducers/userReducers";
 
 
 export const TopMenuUser:FC = () => {
     const stateList = useSelector((state:AppStateType) => state.menuListReducer)
+    const stateUser = useSelector<AppStateType, initStateType>(data => data.UserReducers)
     const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
 
@@ -39,7 +41,7 @@ export const TopMenuUser:FC = () => {
             <div className="burger_icon">
                 {drawBurger()}
             </div>
-            <div className="username_top"><b>User</b></div>
+            <div className="username_top"><b>{stateUser.username}</b></div>
         </div>
     )
 }

@@ -10,9 +10,20 @@ export const SET_INIT_INFO_USER = 'SET_INIT_INFO_USER'
 export const SET_AUTH_USER = 'SET_AUTH_USER'
 export const SET_ERROR_MESSAGE_USER = 'SET_ERROR_MESSAGE_USER'
 export const SET_ROOMS = 'SET_ROOMS'
+export const SET_LOADING_USER = 'SET_LOADING_USER'
 
 
 //Action Creator
+type setLoadingUserType = {
+    type: typeof SET_LOADING_USER,
+    value: boolean
+}
+
+
+export const setLoadingUser = (value:boolean):setLoadingUserType => ({
+    type: SET_LOADING_USER, value
+})
+
 type setInitInfoUserACType = {
     type: typeof SET_INIT_INFO_USER
     id: string
@@ -55,7 +66,8 @@ export const setRooms = (rooms: Array<string>):setRoomsType => ({
 export type actionTypeUserReducer = setInitInfoUserACType |
     setAuthUserType |
     setErrorMessageUserType |
-    setRoomsType
+    setRoomsType |
+    setLoadingUserType
 
 
 
@@ -68,7 +80,8 @@ export type initStateType = {
     lastName: string | null,
     isAuth: boolean,
     errorText: string | null,
-    rooms?: Array<string>
+    rooms?: Array<string>,
+    isLoading: boolean
 }
 
 const initState:initStateType = {
@@ -77,7 +90,8 @@ const initState:initStateType = {
     firstName: null,
     lastName: null,
     isAuth: false,
-    errorText: null
+    errorText: null,
+    isLoading: false
 }
 
 
@@ -104,9 +118,15 @@ export const UserReducers = (state=initState, action:actionTypeUserReducer) => {
                 errorText: action.message
             }
         case SET_ROOMS:
+            console.log(action)
             return {
                 ...state,
                 rooms: action.rooms
+            }
+        case SET_LOADING_USER:
+            return {
+                ...state,
+                isLoading: action.value
             }
     }
     return state

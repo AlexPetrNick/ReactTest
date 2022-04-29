@@ -4,6 +4,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../redux/react-redux";
 import {actionMenuReducerType, getListGroupFoundType} from "../../redux/reducers/menuListReducer";
 import {listGroupFoundThunk, listUsersFoundThunk} from "../../redux/thunk";
+import {LoadingList} from "../elements/LoadingList";
+import {stat} from "fs";
 
 
 export const ListMenuGroup:FC = () => {
@@ -13,6 +15,7 @@ export const ListMenuGroup:FC = () => {
 
 
     const listGroupUser = stateList.groupList?.map((us: getListGroupFoundType) => {
+        console.log(us)
         const data = us.talking.createDate.split('T')[1].split('.')[0]
         const selected = us.friend.id === selectedUser ? us.friend.id : ""
         return (
@@ -31,9 +34,16 @@ export const ListMenuGroup:FC = () => {
         dispatchAC(listGroupFoundThunk())
     }, [])
 
+    console.log(stateList.isLoadingList)
+
     return (
         <div className="list_chats">
-            {listGroupUser}
+            {
+                stateList.isLoadingList ?
+                    <LoadingList /> :
+                    <div className="list_group_style">{listGroupUser}</div>
+            }
+
         </div>
     )
 }

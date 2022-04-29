@@ -1,5 +1,6 @@
 import {setting} from "../config/config";
 import {getValueLocalStorage} from "../Service/Localstorage";
+import {getBearer} from "./common";
 
 
 const {serverDns, ...data} = setting
@@ -54,7 +55,7 @@ export const getRoomsSocketIo = () => {
     return fetch(`${serverDns}/auth/get-rooms/`, {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': bearer
+            'Authorization': getBearer()
         },
         mode:"cors",
     })

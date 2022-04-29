@@ -1,12 +1,21 @@
-
 export const SET_LIST_USER = 'SET_LIST_USER'
 export const SET_ERROR_USERS_LIST_FOUND = 'SET_ERROR_USERS_LIST_FOUND'
 export const SET_MODE_MENU_LIST = 'SET_MODE_MENU_LIST'
 export const SET_GROUP_MENU_LIST = 'SET_GROUP_MENU_LIST'
 export const UPDATE_MSG_FROM_USER = 'UPDATE_MSG_FROM_USER'
 export const SELECT_USER = 'SELECT_USER'
+export const SET_LOADING_LIST = 'SET_LOADING_LIST'
 
 // Action creator
+
+type setLoadingListType = {
+    type: typeof SET_LOADING_LIST,
+    value: boolean
+}
+
+export const setLoadingList = (value:boolean):setLoadingListType => ({
+    type: SET_LOADING_LIST, value
+})
 
 type selectUserType = {
     type: typeof SELECT_USER,
@@ -103,7 +112,8 @@ export type menuListReducerType = {
     menuUser?: Array<any>,
     groupList?: Array<getListGroupFoundType>,
     errors: Array<string>
-    selectedUser?: string
+    selectedUser?: string,
+    isLoadingList: boolean
 }
 
 const initTypeMenuListReducer:menuListReducerType = {
@@ -112,7 +122,8 @@ const initTypeMenuListReducer:menuListReducerType = {
     menuUser: undefined,
     groupList: undefined,
     errors: [],
-    selectedUser: undefined
+    selectedUser: undefined,
+    isLoadingList: false
 }
 
 export type actionMenuReducerType = setListUserACType |
@@ -120,7 +131,8 @@ export type actionMenuReducerType = setListUserACType |
     setModeListType |
     setGroupMenuListType |
     updateMsgFromUserType |
-    selectUserType
+    selectUserType |
+    setLoadingListType
 
 
 
@@ -144,16 +156,18 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             }
         }
         case SET_GROUP_MENU_LIST: {
+            console.log(action)
             return {
                 ...state,
                 groupList: [...action.groupList]
             }
         }
         case UPDATE_MSG_FROM_USER: {
+            console.log(action)
             return {
                 ...state,
                 groupList: state.groupList?.map((elem:getListGroupFoundType) => {
-                    return elem.friend.id === action.id ? {
+                    return elem.talking.talkingGroupId === action.talking.talkingGroupId ? {
                         ...elem,
                         talking: action.talking
                     } : elem
@@ -165,6 +179,12 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             return {
                 ...state,
                 selectedUser: action.id
+            }
+        }
+        case SET_LOADING_LIST: {
+            return {
+                ...state,
+                isLoadingList: action.value
             }
         }
     }

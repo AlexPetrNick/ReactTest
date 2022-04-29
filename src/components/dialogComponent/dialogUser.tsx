@@ -2,12 +2,12 @@ import {FC, useLayoutEffect, useRef} from "react";
 import './dialogStyle.css'
 import {stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatchType, AppStateType} from "../../redux/react-redux";
+import {AppStateType} from "../../redux/react-redux";
 import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
 import {DialogItemUser} from "./dialogItem/dialogItemUser";
 import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import {getDialogInfoThunk, listGroupFoundThunk, listUsersFoundThunk, sendDialogMsgThunk} from "../../redux/thunk";
+import {getDialogInfoThunk, listGroupFoundThunk} from "../../redux/thunk";
 import {initStateType} from "../../redux/reducers/userReducers";
 import {getListUserFoundType, selectUser, setModeListAC} from "../../redux/reducers/menuListReducer";
 
@@ -26,7 +26,6 @@ export const DialogUser: FC<DialogUserType> = (props) => {
     const userInfo = dialog.userInfo
     const messages = dialog.message
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
-    const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
 
     const getUserId = userInfo._id ?
@@ -43,7 +42,6 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         dispatchAC(setModeListAC("group"))
         dispatchAC(selectUser(getUserId ? getUserId : ''))
         dispatchAC(getDialogInfoThunk(userInfo.username))
-
     }
 
     useLayoutEffect(() => {

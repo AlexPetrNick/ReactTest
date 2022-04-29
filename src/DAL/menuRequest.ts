@@ -1,11 +1,9 @@
 import {setting} from "../config/config";
 import {getValueLocalStorage} from "../Service/Localstorage";
+import {getBearer} from "./common";
 
 
 const {serverDns, ...data} = setting
-
-const token = getValueLocalStorage('access')
-const bearer = `Bearer ${token}`
 
 
 export const getListUsersFound = () => {
@@ -13,7 +11,7 @@ export const getListUsersFound = () => {
         mode:"cors",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': bearer
+            'Authorization': getBearer()
         },
     })
         .then(data => data.json())
@@ -25,7 +23,7 @@ export const getListGroupFound = () => {
         mode:"cors",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': bearer
+            'Authorization': getBearer()
         },
     })
         .then(data => data.json())

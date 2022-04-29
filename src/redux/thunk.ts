@@ -5,7 +5,7 @@ import {
     actionTypeUserReducer,
     setAuthUser,
     setErrorMessageUser,
-    setInitInfoUserAC,
+    setInitInfoUserAC, setLoadingUser,
     setRooms
 } from "./reducers/userReducers";
 import {getListGroupFound, getListUsersFound} from "../DAL/menuRequest";
@@ -16,29 +16,39 @@ import {
     setListUserAC
 } from "./reducers/menuListReducer";
 import {actionDialogType, setDialogError, setDialogWind} from "./reducers/dialogReducer";
-import {userInfo} from "os";
 import {dataDialogSendMsg, getTalkingGroupInfo, sendMessageDialog} from "../DAL/dialogsRequest";
 
+type authUserThunkAction = actionTypeUserReducer | actionMenuReducerType
 
-export const authUserThunk = (data:dataUserRegistrationAuth) => {
-    return (dispatch: Dispatch<actionTypeUserReducer>) => {
+export const authUserThunk = (data: dataUserRegistrationAuth) => {
+    return (dispatch: Dispatch<authUserThunkAction>) => {
         authServer(data)
             .then(data => {
+                dispatch(setLoadingUser(true))
+                console.log(data)
+                return data
+            })
+            .then(data => {
+                setAccessRefreshToken(data)
+                return data
+            })
+            .then(data => {
+                console.log('there')
                 if (data.message) {
                     dispatch(setErrorMessageUser(data.message))
                 } else {
-                    setAccessRefreshToken(data)
                     dispatch(setInitInfoUserAC(data.id, data.username))
-                    dispatch(setAuthUser(true))
+                    dispatch(setGroupMenuList(data.dataDialog))
                     if (data.nameRooms) {
                         dispatch(setRooms(data.nameRooms))
                     }
                 }
+                dispatch(setAuthUser(true))
+                dispatch(setLoadingUser(false))
             })
             .catch(e => dispatch(setErrorMessageUser(e.message)))
     }
 }
-
 
 
 export const listUsersFoundThunk = () => {
@@ -55,13 +65,13 @@ export const listGroupFoundThunk = () => {
     return (dispatch: Dispatch<actionMenuReducerType>) => {
         getListGroupFound()
             .then(data => {
-                dispatch(setGroupMenuList(data.dataGroup))
+                dispatch(setGroupMenuList(data.data))
             })
             .catch(e => dispatch(setErrorUsersListFoundAC(e.message)))
     }
 }
 
-export const getDialogInfoThunk = (user:string|null) => {
+export const getDialogInfoThunk = (user: string | null) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         getTalkingGroupInfo(user)
             .then(data => {
@@ -71,7 +81,7 @@ export const getDialogInfoThunk = (user:string|null) => {
     }
 }
 
-export const sendDialogMsgThunk = (data:dataDialogSendMsg) => {
+export const sendDialogMsgThunk = (data: dataDialogSendMsg) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         sendMessageDialog(data)
             .then(data => {

@@ -2,14 +2,15 @@ import {useEffect, useRef, useState} from "react";
 import {io} from "socket.io-client";
 import {useDispatch} from "react-redux";
 import {addMsgAfterEvent, messageType, setReadMsg} from "../redux/reducers/dialogReducer";
-import {updateMsgFromUser} from "../redux/reducers/menuListReducer";
+import {setLoadingList, updateMsgFromUser} from "../redux/reducers/menuListReducer";
 import {getRoomsSocketIo} from "../DAL/authRequest";
+import {listGroupFoundThunk} from "../redux/thunk";
 
 
 const SERVER_URL = 'http://localhost:3000'
 
 
-export const useChat = (roomId, idUser) => {
+export const useChat = (roomsId, idUser) => {
     const dispatchAC = useDispatch()
 
     const socketRef = useRef(null)
@@ -20,18 +21,20 @@ export const useChat = (roomId, idUser) => {
             query: {idUser}
         })
 
-
-        getRoomsSocketIo()
-            .then(data => {
-                data.nameRooms.forEach(room => {
-                    socketRef.current.emit('joinRoom', room)
-                })
-            })
+        roomsId.forEach(room => {
+            socketRef.current.emit('joinRoom', room)
+        })
 
         socketRef.current.on('msg:read', (arg) => {
             dispatchAC(setReadMsg(arg, idUser))
         })
+
+        socketRef.current.on('msg:newroom', (arg) => {
+            joinNewRoom(arg)
+        })
+
         socketRef.current.on('msg:newcr', (id, senderId, talkId, msg, getId) => {
+            console.log('message return to user')
             const newMsg = {
                 _id: id,
                 userId: senderId,
@@ -44,15 +47,17 @@ export const useChat = (roomId, idUser) => {
                 createDate: new Date().toISOString(),
                 "__v": 0
             }
-            const { __v, ...msgList} = newMsg
+            const {__v, ...msgList} = newMsg
             dispatchAC(addMsgAfterEvent(newMsg))
             dispatchAC(updateMsgFromUser(getId, msgList))
+
+        })
+
+        socketRef.current.on('user:newfriend', () => {
+            dispatchAC(listGroupFoundThunk())
         })
 
 
-        socketRef.current.on('test2', (a) => {
-            console.log('from server')
-        })
 
         socketRef.current.on('hi:user', (a) => {
             console.log(`New user ${a}`)
@@ -61,15 +66,20 @@ export const useChat = (roomId, idUser) => {
         return () => {
             socketRef.current.disconnect()
         }
-    }, [roomId, idUser])
+    }, [roomsId, idUser])
 
     const sendMessageEvent = (id, message, room, curId) => {
         socketRef.current.emit('msg:new', id, message, room, curId)
+        // dispatchAC(setLoadingList(true))
 
     }
 
     const seeMessage = (idMessage, curId) => {
         socketRef.current.emit('msg:see', idMessage, curId)
+    }
+
+    const joinNewRoom = (room) => {
+        socketRef.current.emit('msg:joinroom', room)
     }
 
 
