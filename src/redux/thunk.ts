@@ -25,7 +25,6 @@ export const authUserThunk = (data: dataUserRegistrationAuth) => {
         authServer(data)
             .then(data => {
                 dispatch(setLoadingUser(true))
-                console.log(data)
                 return data
             })
             .then(data => {
@@ -33,7 +32,6 @@ export const authUserThunk = (data: dataUserRegistrationAuth) => {
                 return data
             })
             .then(data => {
-                console.log('there')
                 if (data.message) {
                     dispatch(setErrorMessageUser(data.message))
                 } else {

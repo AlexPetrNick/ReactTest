@@ -136,3 +136,15 @@
 .unread {
     box-shadow: 10px 5px 5px green;
 }
+
+.line_unread_msg {
+    width: 99%;
+    height: 30px;
+    border-bottom: 3px solid green;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}

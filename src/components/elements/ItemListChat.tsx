@@ -2,7 +2,7 @@ import {FC, MouseEvent} from "react";
 import '../../App.css'
 import {useDispatch} from "react-redux";
 import {getDialogInfoThunk} from "../../redux/thunk";
-import {selectUser} from "../../redux/reducers/menuListReducer";
+import {selectUser, setNullUnreadMsg} from "../../redux/reducers/menuListReducer";
 
 type ItemListChatType = {
     id: string,
@@ -10,6 +10,8 @@ type ItemListChatType = {
     dateLastMessage: string,
     lastMessage: string,
     selectedUser?: string
+    unreadMsg: number
+
 }
 
 export const ItemListChat: FC<ItemListChatType> = (props) => {
@@ -18,6 +20,7 @@ export const ItemListChat: FC<ItemListChatType> = (props) => {
     const onClickList = (e:MouseEvent<HTMLDivElement>) => {
         dispatchAC(getDialogInfoThunk(props.username))
         dispatchAC(selectUser(props.id))
+        dispatchAC(setNullUnreadMsg(props.id))
     }
 
     const style = props.selectedUser ? "chat_short_in_list selected_user" : "chat_short_in_list"
@@ -32,7 +35,7 @@ export const ItemListChat: FC<ItemListChatType> = (props) => {
                 </div>
                 <div className="last_msg_short_wr">
                     <div className="last_msg_short">{props.lastMessage}</div>
-                    <div className="icons_read"> </div>
+                    <div className="icons_read"><b>{props.unreadMsg !== 0 ? props.unreadMsg : null}</b></div>
                 </div>
             </div>
         </div>

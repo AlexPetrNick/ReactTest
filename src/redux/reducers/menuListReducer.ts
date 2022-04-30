@@ -5,8 +5,28 @@ export const SET_GROUP_MENU_LIST = 'SET_GROUP_MENU_LIST'
 export const UPDATE_MSG_FROM_USER = 'UPDATE_MSG_FROM_USER'
 export const SELECT_USER = 'SELECT_USER'
 export const SET_LOADING_LIST = 'SET_LOADING_LIST'
+export const SET_NULL_UNREAD_MSG = 'SET_NULL_UNREAD_MSG'
+export const INCREMENT_UNREAD_MSG = 'INCREMENT_UNREAD_MSG'
 
 // Action creator
+
+type incrementUnreadMsgType = {
+    type: typeof INCREMENT_UNREAD_MSG,
+    idFriend: string
+}
+
+export const incrementUnreadMsg = (idFriend:string):incrementUnreadMsgType => ({
+    type: INCREMENT_UNREAD_MSG, idFriend
+})
+
+type setNullUnreadMsgType = {
+    type: typeof SET_NULL_UNREAD_MSG,
+    idFriend: string
+}
+
+export const setNullUnreadMsg = (idFriend:string):setNullUnreadMsgType => ({
+    type: SET_NULL_UNREAD_MSG, idFriend
+})
 
 type setLoadingListType = {
     type: typeof SET_LOADING_LIST,
@@ -101,7 +121,8 @@ export type getListGroupFoundType = {
         firstName?: string,
         lastName?: string
     },
-    talking: talkingLastMsgType
+    talking: talkingLastMsgType,
+    cntUnreadMsg: number
 }
 
 type modeMenu = "group" | "menu" | "find"
@@ -132,7 +153,10 @@ export type actionMenuReducerType = setListUserACType |
     setGroupMenuListType |
     updateMsgFromUserType |
     selectUserType |
-    setLoadingListType
+    setLoadingListType |
+    setNullUnreadMsgType |
+    incrementUnreadMsgType
+
 
 
 
@@ -156,14 +180,12 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             }
         }
         case SET_GROUP_MENU_LIST: {
-            console.log(action)
             return {
                 ...state,
                 groupList: [...action.groupList]
             }
         }
         case UPDATE_MSG_FROM_USER: {
-            console.log(action)
             return {
                 ...state,
                 groupList: state.groupList?.map((elem:getListGroupFoundType) => {
@@ -185,6 +207,26 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             return {
                 ...state,
                 isLoadingList: action.value
+            }
+        }
+        case SET_NULL_UNREAD_MSG: {
+            return {
+                ...state,
+                groupList: state.groupList?.map((group:getListGroupFoundType) => {
+                    return group.friend.id === action.idFriend ?
+                        {...group, cntUnreadMsg: 0} :
+                        group
+                })
+            }
+        }
+        case INCREMENT_UNREAD_MSG: {
+            return {
+                ...state,
+                groupList: state.groupList?.map((group:getListGroupFoundType) => {
+                    return group.friend.id === action.idFriend ?
+                        {...group, cntUnreadMsg: group.cntUnreadMsg + 1} :
+                        group
+                })
             }
         }
     }

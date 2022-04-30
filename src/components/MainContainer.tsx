@@ -21,19 +21,22 @@ export const MainContainer: FC = (props) => {
         isLoading,
         ...stateUser
     } = useSelector<AppStateType, initStateType>((state: AppStateType) => state.UserReducers)
-    const {seeMessage, sendMessageEvent} = useChat(userInfoRooms, stateUser.id)
+    const {
+        sendMessageEvent,
+        readAllMsg
+    } = useChat(userInfoRooms, stateUser.id)
 
 
     const drawMenu = () => {
         if (stateList.mode === "find") return <ListMenuFound/>
         if (stateList.mode === "menu") return <ListMenuSetting/>
-        return <ListMenuGroup/>
+        return <ListMenuGroup />
     }
 
     const drawDialog = () => {
         if (stateListDialog.userInfo.username) {
             return <DialogUser
-                seeMessage={seeMessage}
+                readAllMsg={readAllMsg}
                 sendMessage={sendMessageEvent}
                 dialogInfo={stateListDialog}
             />

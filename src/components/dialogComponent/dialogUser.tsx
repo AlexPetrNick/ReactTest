@@ -1,6 +1,6 @@
-import {FC, useLayoutEffect, useRef} from "react";
+import {FC, MouseEvent, useLayoutEffect, useRef} from "react";
 import './dialogStyle.css'
-import {stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
+import {messageType, stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../redux/react-redux";
 import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
@@ -9,29 +9,36 @@ import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {getDialogInfoThunk, listGroupFoundThunk} from "../../redux/thunk";
 import {initStateType} from "../../redux/reducers/userReducers";
-import {getListUserFoundType, selectUser, setModeListAC} from "../../redux/reducers/menuListReducer";
+import {
+    getListUserFoundType,
+    menuListReducerType,
+    selectUser,
+    setModeListAC,
+    setNullUnreadMsg
+} from "../../redux/reducers/menuListReducer";
 
 
 type DialogUserType = {
     dialogInfo: stateDIalogReducerType,
-    seeMessage: (idMessage:string) => void
-    sendMessage: (id:string, message:string, room:string, curId:string) => void
+    sendMessage: (id: string, message: string, room: string, curId: string) => void
+    readAllMsg: (idFriend: string) => void
 }
 
 export const DialogUser: FC<DialogUserType> = (props) => {
     const currUserInfo = useSelector<AppStateType, initStateType>(data => data.UserReducers)
-    const foundUser = useSelector<AppStateType, getListUserFoundType[] | undefined >(data => data.menuListReducer.usersFound)
+    const {usersFound, ...menuInfo} = useSelector<AppStateType, menuListReducerType>(data => data.menuListReducer)
+    const dialogInfo = useSelector<AppStateType, stateDIalogReducerType>(data => data.DialogReducer)
     const overFlow = useRef<HTMLDivElement>(null)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo
     const messages = dialog.message
-    const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation:true})
+    const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation: true})
     const dispatchAC = useDispatch()
 
     const getUserId = userInfo._id ?
         userInfo._id :
-        foundUser?.filter(us => us.username === userInfo.username)[0]['id']
-    const onSubmitForm:SubmitHandler<FieldValues> = (data) => {
+        usersFound?.filter(us => us.username === userInfo.username)[0]['id']
+    const onSubmitForm: SubmitHandler<FieldValues> = (data) => {
         props.sendMessage(
             getUserId ? getUserId : '',
             data.message,
@@ -45,14 +52,13 @@ export const DialogUser: FC<DialogUserType> = (props) => {
     }
 
     useLayoutEffect(() => {
-        const scrollOptions:ScrollToOptions = {
+        const scrollOptions: ScrollToOptions = {
             left: 0,
             top: 10000000,
             behavior: 'auto'
         }
         overFlow.current?.scrollTo(scrollOptions)
     })
-
 
 
     const drawName = () => {
@@ -67,8 +73,13 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         return name
     }
 
-    const drawMessage = () => {
-        return messages?.map(mes => {
+    const listMessage = (isRead=true) => {
+        const msgCurrentFriend = messages?.filter((msg:messageType) => msg.talkingGroupId === dialogInfo.groupInfo?._id)
+        console.log(msgCurrentFriend)
+        const readMsg = msgCurrentFriend?.filter((msg:messageType) => {
+            return isRead ? msg.whoRead.includes(String(currUserInfo.id)) : !msg.whoRead.includes(String(currUserInfo.id))
+        })
+        return readMsg?.map(mes => {
             if (mes.userId === currUserInfo.id) {
                 return (
                     <DialogItemUser message={mes}/>
@@ -76,7 +87,6 @@ export const DialogUser: FC<DialogUserType> = (props) => {
             } else {
                 return (
                     <DialogItemFriend
-                        seeMessage={props.seeMessage}
                         message={mes}
                         userid={currUserInfo.id}
                     />
@@ -85,7 +95,41 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         })
     }
 
+    const drawMessageRead = () => {
+        return listMessage()
+    }
+    const drawMessageUnread = () => {
+        return listMessage(false)
+    }
 
+    const drawListMessage = () => {
+        const readMsg = drawMessageRead()
+        const unreadMsg = drawMessageUnread()
+        if (unreadMsg?.length) {
+            return (
+                <>
+                    {readMsg}
+                    <div className="line_unread_msg"><b>Непрочитаные сообщения</b></div>
+                    {unreadMsg}
+                </>
+            )
+        } else {
+            return (
+                <>
+                    {readMsg}
+                </>
+            )
+        }
+    }
+    console.log(drawListMessage())
+
+
+    const onClickHandler = (e: MouseEvent<HTMLDivElement>) => {
+        props.readAllMsg(String(props.dialogInfo.userInfo._id))
+        dispatchAC(setNullUnreadMsg(String(props.dialogInfo.userInfo._id)))
+    }
+
+    console.log(dialogInfo)
     return (
         <div className={'dialog_user'}>
             <div className="header_dialog">
@@ -95,8 +139,10 @@ export const DialogUser: FC<DialogUserType> = (props) => {
                 </div>
             </div>
             {messages ?
-                <div ref={overFlow} className="content_dialog">{drawMessage()}</div> :
-                <NotMessages />
+                <div ref={overFlow} className="content_dialog" onClick={onClickHandler}>
+                    {drawListMessage()}
+                </div> :
+                <NotMessages/>
             }
             <div className="message_crud_dialog">
                 <form className="form_dialog" onSubmit={handleSubmit(onSubmitForm)}>

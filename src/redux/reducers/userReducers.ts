@@ -118,7 +118,6 @@ export const UserReducers = (state=initState, action:actionTypeUserReducer) => {
                 errorText: action.message
             }
         case SET_ROOMS:
-            console.log(action)
             return {
                 ...state,
                 rooms: action.rooms

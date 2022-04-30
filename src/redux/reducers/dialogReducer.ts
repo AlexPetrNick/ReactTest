@@ -5,8 +5,19 @@ export const SET_DIALOG_FROM_FOUND_USER = 'SET_DIALOG_FROM_FOUND_USER'
 export const SET_READ_MSG = 'SET_READ_MSG'
 export const SET_DEFAULT_STATE = 'SET_DEFAULT_STATE'
 export const ADD_MESSAGE_AFTER_EVENT = 'ADD_MESSAGE_AFTER_EVENT'
+export const SET_ALL_READ_MSG = 'SET_ALL_READ_MSG'
 
 //ACTION CREATOR
+
+type setAllReadMsgType = {
+    type: typeof SET_ALL_READ_MSG
+    idUser: string
+}
+
+export const setAllReadMsg = (idUser:string):setAllReadMsgType => ({
+    type: SET_ALL_READ_MSG, idUser
+})
+
 
 type addMsgAfterEventType = {
     type: typeof ADD_MESSAGE_AFTER_EVENT,
@@ -85,7 +96,7 @@ export type messageType = {
 }
 
 export type groupInfoType = {
-    id: string,
+    _id: string,
     usersId: string[],
     name: string,
     individual: boolean,
@@ -113,7 +124,8 @@ export type actionDialogType = setDialogWindType |
     setDialogWindFromFoundType |
     setReadMsgType |
     setDefaultStateType |
-    addMsgAfterEventType
+    addMsgAfterEventType |
+    setAllReadMsgType
 
 
 const initStateDialog = {
@@ -167,6 +179,17 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
             return {
                 ...state,
                 message: newArrayMsg
+            }
+        }
+        case SET_ALL_READ_MSG: {
+            console.log('readmsg')
+            return {
+                ...state,
+                message: state.message?.map((msg:messageType) => {
+                    return !msg.whoRead.includes(action.idUser) ?
+                        {...msg, whoRead:[...msg.whoRead, action.idUser]} :
+                        {...msg}
+                })
             }
         }
     }
