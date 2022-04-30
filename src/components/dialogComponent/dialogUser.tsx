@@ -34,6 +34,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
     const messages = dialog.message
     const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation: true})
     const dispatchAC = useDispatch()
+    let haveUnreadMsg = false
 
     const getUserId = userInfo._id ?
         userInfo._id :
@@ -106,6 +107,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         const readMsg = drawMessageRead()
         const unreadMsg = drawMessageUnread()
         if (unreadMsg?.length) {
+            haveUnreadMsg = true
             return (
                 <>
                     {readMsg}
@@ -114,6 +116,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
                 </>
             )
         } else {
+            haveUnreadMsg = false
             return (
                 <>
                     {readMsg}
@@ -139,7 +142,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
                 </div>
             </div>
             {messages ?
-                <div ref={overFlow} className="content_dialog" onClick={onClickHandler}>
+                <div ref={overFlow} className="content_dialog" onClick={haveUnreadMsg ? onClickHandler : undefined}>
                     {drawListMessage()}
                 </div> :
                 <NotMessages/>
