@@ -1,12 +1,14 @@
-import {authServer, dataUserRegistrationAuth} from "../DAL/authRequest";
+import {authServer, dataUpdateType, dataUserRegistrationAuth, updateUser} from "../DAL/authRequest";
 import {Dispatch} from "redux";
 import {setAccessRefreshToken} from "../Service/Localstorage";
 import {
     actionTypeUserReducer,
     setAuthUser,
     setErrorMessageUser,
-    setInitInfoUserAC, setLoadingUser,
-    setRooms
+    setInitInfoUserAC,
+    setLoadingUser,
+    setRooms,
+    updateUserAC
 } from "./reducers/userReducers";
 import {getListGroupFound, getListUsersFound} from "../DAL/menuRequest";
 import {
@@ -92,3 +94,15 @@ export const sendDialogMsgThunk = (data: dataDialogSendMsg) => {
 }
 
 
+export const updateUserThunk = (dataUs:dataUpdateType) => {
+    return (dispatch: Dispatch<authUserThunkAction>) => {
+        console.log(dataUs)
+        updateUser(dataUs)
+            .then(data => {
+                const d = data
+                console.log(d)
+                dispatch(updateUserAC(d))
+            })
+            .catch(e => console.log(e.message))
+    }
+}

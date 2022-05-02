@@ -1,6 +1,6 @@
 import {FC, MouseEvent, useLayoutEffect, useRef} from "react";
 import './dialogStyle.css'
-import {messageType, stateDIalogReducerType} from "../../redux/reducers/dialogReducer";
+import {messageType, stateDialogReducerType} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../redux/react-redux";
 import {DialogItemFriend} from "./dialogItem/dialogItemFriend";
@@ -8,7 +8,7 @@ import {DialogItemUser} from "./dialogItem/dialogItemUser";
 import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {getDialogInfoThunk, listGroupFoundThunk} from "../../redux/thunk";
-import {initStateType} from "../../redux/reducers/userReducers";
+import {initUserStateType} from "../../redux/reducers/userReducers";
 import {
     getListUserFoundType,
     menuListReducerType,
@@ -19,15 +19,15 @@ import {
 
 
 type DialogUserType = {
-    dialogInfo: stateDIalogReducerType,
+    dialogInfo: stateDialogReducerType,
     sendMessage: (id: string, message: string, room: string, curId: string) => void
     readAllMsg: (idFriend: string) => void
 }
 
 export const DialogUser: FC<DialogUserType> = (props) => {
-    const currUserInfo = useSelector<AppStateType, initStateType>(data => data.UserReducers)
+    const currUserInfo = useSelector<AppStateType, initUserStateType>(data => data.UserReducers)
     const {usersFound, ...menuInfo} = useSelector<AppStateType, menuListReducerType>(data => data.menuListReducer)
-    const dialogInfo = useSelector<AppStateType, stateDIalogReducerType>(data => data.DialogReducer)
+    const dialogInfo = useSelector<AppStateType, stateDialogReducerType>(data => data.DialogReducer)
     const overFlow = useRef<HTMLDivElement>(null)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo

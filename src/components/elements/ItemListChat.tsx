@@ -3,6 +3,7 @@ import '../../App.css'
 import {useDispatch} from "react-redux";
 import {getDialogInfoThunk} from "../../redux/thunk";
 import {selectUser, setNullUnreadMsg} from "../../redux/reducers/menuListReducer";
+import {setModeDialog} from "../../redux/reducers/dialogReducer";
 
 type ItemListChatType = {
     id: string,
@@ -18,6 +19,7 @@ export const ItemListChat: FC<ItemListChatType> = (props) => {
     const dispatchAC = useDispatch()
 
     const onClickList = (e:MouseEvent<HTMLDivElement>) => {
+        dispatchAC(setModeDialog('dialog'))
         dispatchAC(getDialogInfoThunk(props.username))
         dispatchAC(selectUser(props.id))
         dispatchAC(setNullUnreadMsg(props.id))

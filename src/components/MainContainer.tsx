@@ -9,22 +9,23 @@ import {DialogEmpty} from "./dialogComponent/dialogEmpty";
 import {DialogUser} from "./dialogComponent/dialogUser";
 import {useChat} from "../socketio/useRoom";
 import {TopMenuUser} from "./elements/TopMenuUser/TopMenuUser";
-import {initStateType} from "../redux/reducers/userReducers";
+import {initUserStateType} from "../redux/reducers/userReducers";
 import {LoadingMain} from "./elements/LoadingMain";
+import {SettingMenu} from "./SettingMenu/SettingMenu";
 
 
 export const MainContainer: FC = (props) => {
-    const userInfoRooms = useSelector<AppStateType, Array<string> | undefined>((state: AppStateType) => state.UserReducers.rooms)
+    const {rooms, ...authInfo} = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
     const stateList = useSelector((state: AppStateType) => state.menuListReducer)
     const stateListDialog = useSelector((state: AppStateType) => state.DialogReducer)
     const {
         isLoading,
         ...stateUser
-    } = useSelector<AppStateType, initStateType>((state: AppStateType) => state.UserReducers)
+    } = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
     const {
         sendMessageEvent,
         readAllMsg
-    } = useChat(userInfoRooms, stateUser.id)
+    } = useChat(rooms, stateUser.id)
 
 
     const drawMenu = () => {
@@ -34,14 +35,18 @@ export const MainContainer: FC = (props) => {
     }
 
     const drawDialog = () => {
-        if (stateListDialog.userInfo.username) {
-            return <DialogUser
-                readAllMsg={readAllMsg}
-                sendMessage={sendMessageEvent}
-                dialogInfo={stateListDialog}
-            />
+        if (stateListDialog.mode === "dialog") {
+            if (stateListDialog.userInfo.username) {
+                return <DialogUser
+                    readAllMsg={readAllMsg}
+                    sendMessage={sendMessageEvent}
+                    dialogInfo={stateListDialog}
+                />
+            }
+            return <DialogEmpty/>
+        } else {
+            return <SettingMenu stateUser={authInfo}/>
         }
-        return <DialogEmpty/>
     }
 
     return (

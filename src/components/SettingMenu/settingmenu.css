@@ -1,0 +1,16 @@
+.wrapper_setting {
+    color: white;
+    height: 99%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.wrapper_setting h2{
+    height: 40px;
+}
+
+.wrapper_items_setting {
+    background-color: rgba(173, 173, 173, 0.55);
+    width: 100%;
+    height: 100%;
+}

@@ -6,8 +6,18 @@ export const SET_READ_MSG = 'SET_READ_MSG'
 export const SET_DEFAULT_STATE = 'SET_DEFAULT_STATE'
 export const ADD_MESSAGE_AFTER_EVENT = 'ADD_MESSAGE_AFTER_EVENT'
 export const SET_ALL_READ_MSG = 'SET_ALL_READ_MSG'
+export const SET_MODE_DIALOG = 'SET_MODE_DIALOG'
 
 //ACTION CREATOR
+
+type setModeDialogType = {
+    type: typeof SET_MODE_DIALOG,
+    mode: modeDialog
+}
+
+export const setModeDialog = (mode:modeDialog):setModeDialogType => ({
+    type: SET_MODE_DIALOG, mode
+})
 
 type setAllReadMsgType = {
     type: typeof SET_ALL_READ_MSG
@@ -112,11 +122,14 @@ export type userInfoType = {
     lastName?: string,
 }
 
-export type stateDIalogReducerType = {
+export type modeDialog = 'dialog' | 'setting'
+
+export type stateDialogReducerType = {
     userInfo: userInfoType
     groupInfo: groupInfoType | null
     message?: Array<messageType>
     error: string | null
+    mode: modeDialog
 }
 
 export type actionDialogType = setDialogWindType |
@@ -125,18 +138,20 @@ export type actionDialogType = setDialogWindType |
     setReadMsgType |
     setDefaultStateType |
     addMsgAfterEventType |
-    setAllReadMsgType
+    setAllReadMsgType |
+    setModeDialogType
 
 
-const initStateDialog = {
+const initStateDialog:stateDialogReducerType = {
     userInfo: {
         username: null,
     },
     groupInfo: null,
-    error: null
+    error: null,
+    mode:"dialog"
 }
 
-export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, action: actionDialogType): stateDIalogReducerType => {
+export const DialogReducer = (state: stateDialogReducerType = initStateDialog, action: actionDialogType): stateDialogReducerType => {
     switch (action.type) {
         case SET_DIALOG: {
             return {
@@ -190,6 +205,12 @@ export const DialogReducer = (state: stateDIalogReducerType = initStateDialog, a
                         {...msg, whoRead:[...msg.whoRead, action.idUser]} :
                         {...msg}
                 })
+            }
+        }
+        case SET_MODE_DIALOG: {
+            return {
+                ...state,
+                mode: action.mode
             }
         }
     }

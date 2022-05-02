@@ -3,10 +3,10 @@ import React, {FC} from "react";
 import {MainContainer} from "./MainContainer";
 import {useSelector} from "react-redux";
 import {AppStateType} from "../redux/react-redux";
-import {initStateType} from "../redux/reducers/userReducers";
+import {initUserStateType} from "../redux/reducers/userReducers";
 
 export const WorkAreaComponent:FC = () => {
-    const { isAuth } = useSelector<AppStateType, initStateType>((state) => state.UserReducers)
+    const { isAuth } = useSelector<AppStateType, initUserStateType>((state) => state.UserReducers)
 
     return (
         <div className="App">

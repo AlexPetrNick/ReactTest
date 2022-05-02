@@ -4,12 +4,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {FC, MouseEvent, useEffect} from "react";
 import {setModeListAC} from "../../../redux/reducers/menuListReducer";
 import {listUsersFoundThunk} from "../../../redux/thunk";
-import {initStateType} from "../../../redux/reducers/userReducers";
+import {initUserStateType} from "../../../redux/reducers/userReducers";
 
 
 export const TopMenuUser:FC = () => {
     const stateList = useSelector((state:AppStateType) => state.menuListReducer)
-    const stateUser = useSelector<AppStateType, initStateType>(data => data.UserReducers)
+    const stateUser = useSelector<AppStateType, initUserStateType>(data => data.UserReducers)
     const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
 

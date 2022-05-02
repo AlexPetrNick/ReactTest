@@ -61,3 +61,21 @@ export const getRoomsSocketIo = () => {
     })
         .then(data => data.json())
 }
+
+export type dataUpdateType = {
+    email?: string,
+    firstName?: string,
+    lastName?: string
+}
+
+export const updateUser = (dataUser:dataUpdateType) => {
+    return fetch(`${serverDns}/users/change_user/`, {
+        method: 'PUT',
+        body: JSON.stringify(dataUser),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        },
+        mode:"cors",
+    }).then(data => data.json())
+}
