@@ -79,3 +79,22 @@ export const updateUser = (dataUser:dataUpdateType) => {
         mode:"cors",
     }).then(data => data.json())
 }
+
+export type loadImageDataType = {
+    path: string
+}
+
+
+export const loadImageToServer = (loadImageData: any) => {
+    const formData = new FormData()
+    formData.append("avatar", loadImageData, 'data.jpg')
+    return fetch(`${serverDns}/users/upload_image/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Authorization': getBearer(),
+            // 'Content-Type': 'multipart/form-data; boundary=avatar'
+        },
+        mode:"cors",
+    })
+}

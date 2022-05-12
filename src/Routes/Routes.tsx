@@ -6,7 +6,7 @@ export const RoutreMain = () => {
     return (
         <div>
             <Routes>
-                <Route path={'registration'} element={<Registration />}/>
+                    <Route path={'registration'} element={<Registration />}/>
             </Routes>
         </div>
     )}
