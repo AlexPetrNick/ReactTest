@@ -85,10 +85,10 @@ export type loadImageDataType = {
 }
 
 
-export const loadImageToServer = (loadImageData: any) => {
+export const loadOriginImageToServer = (loadImageData: any) => {
     const formData = new FormData()
-    formData.append("avatar", loadImageData, 'data.jpg')
-    return fetch(`${serverDns}/users/upload_image/`, {
+    formData.append("avatar", loadImageData, 'origin.jpg')
+    return fetch(`${serverDns}/users/upload_image_origin/`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -96,5 +96,28 @@ export const loadImageToServer = (loadImageData: any) => {
             // 'Content-Type': 'multipart/form-data; boundary=avatar'
         },
         mode:"cors",
+    })
+}
+
+export const loadCutImageToServer = (loadImageData: any) => {
+    const formData = new FormData()
+    formData.append("avatar", loadImageData, 'cut.jpg')
+    return fetch(`${serverDns}/users/upload_image_cut/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Authorization': getBearer(),
+            // 'Content-Type': 'multipart/form-data; boundary=avatar'
+        },
+        mode:"cors",
+    })
+}
+
+export const loadImageFromServer = (url:string) => {
+    return fetch(url, {
+        headers: {
+            'Authorization': getBearer(),
+        },
+        mode:"no-cors"
     })
 }

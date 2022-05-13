@@ -150,7 +150,7 @@ html, body {
   background-color: rgba(7, 133, 0, 0.47);
 }
 
-.avatar_list {
+.avatar_list_group {
   width: 70px;
   height: 70px;
   background-color: green;

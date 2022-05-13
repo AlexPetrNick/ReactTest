@@ -1,14 +1,9 @@
-import {ChangeEvent, FC, MouseEvent, FocusEventHandler, useState, FormEventHandler, FormEvent} from "react";
+import {FC, MouseEvent, useState} from "react";
 import './zipmenu.css'
 import {ElementZipMenu} from "./elementZipMenu";
 import {useDispatch} from "react-redux";
 import {updateUserThunk} from "../../../redux/thunk";
-import AvatarEditor from 'react-avatar-editor'
-import {setting, settingArray} from "../../../config/config";
-import {logDOM} from "@testing-library/react";
-import {loadImageToServer} from "../../../DAL/authRequest";
-import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import {log} from "util";
+import {AvatarEdit} from "../AvatarEdit/AvatarEdit";
 
 
 type initType = {
@@ -20,14 +15,12 @@ type initType = {
 
 
 export const ZipMenu: FC<initType> = (props) => {
-    const [image, setImage] = useState<string>()
     const [collapse, setCollapse] = useState<boolean>(false)
     const [stateObject, setStateObject] = useState(props.fieldsMenu)
     const dispatchAC = useDispatch()
-    const { register, handleSubmit, watch, resetField, getValues } = useForm();
     const changeFieldState = (field:string, value:string) => setStateObject({...stateObject, [`${field}`]: value})
     const changeState = JSON.stringify(stateObject) !== JSON.stringify(props.fieldsMenu)
-    const filePath = watch('file')
+
     const drwItemBody = () => {
         const initObj = stateObject
         const keys = Object.keys(initObj)
@@ -44,50 +37,10 @@ export const ZipMenu: FC<initType> = (props) => {
     const onClickCollapse = (e:MouseEvent<HTMLDivElement>) => setCollapse(!collapse)
     const onClickReset = (e:MouseEvent<HTMLButtonElement>) => setStateObject(props.fieldsMenu)
     const onClickSave = (e:MouseEvent<HTMLButtonElement>) => dispatchAC(updateUserThunk(stateObject))
-    const onFormSubmit:SubmitHandler<FieldValues> = (data) => {
-        loadImageToServer(data.file[0])
-            .then(data => {
-                return data.blob()
-            })
-            .then(blob => {
-                const a = URL.createObjectURL(blob)
-                setImage(a)
-            })
-
-
-    }
-    const onClickClearImage = (e:MouseEvent<HTMLButtonElement>) => resetField('file')
 
 
     return (
         <div className='wrapper_zip_menu'>
-            {image && <img src={image} />}
-            <form onSubmit={handleSubmit(onFormSubmit)}>
-                <input type="file" {...register('file')}/>
-                <input type="submit"/>
-            </form>
-            {/*{*/}
-
-            {/*    filePath ?*/}
-            {/*        <>*/}
-            {/*            /!*<AvatarEditor*!/*/}
-            {/*            /!*    image={filePath}*!/*/}
-            {/*            /!*    width={250}*!/*/}
-            {/*            /!*    height={250}*!/*/}
-            {/*            /!*    border={50}*!/*/}
-            {/*            /!*    scale={1.2}*!/*/}
-            {/*            <img src={filePath} alt=""/>*/}
-            {/*            <button onClick={onClickClearImage}></button>*/}
-            {/*        </>*/}
-            {/*        :*/}
-            {/*        <div>*/}
-            {/*            <form onSubmit={handleSubmit(onFormSubmit)}>*/}
-            {/*                <input type="file" {...register('file')}/>*/}
-            {/*                <input type="submit"/>*/}
-            {/*            </form>*/}
-            {/*            <b>{}</b>*/}
-            {/*        </div>*/}
-            {/*}*/}
 
             <div className="header_wrapper_zip" onClick={onClickCollapse}>
                 <div className="header_zip"><b>Персональные данные</b></div>

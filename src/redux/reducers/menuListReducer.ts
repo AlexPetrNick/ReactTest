@@ -98,7 +98,8 @@ export type getListUserFoundType = {
     username: string,
     email: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    image: string | null
 }
 
 type talkingLastMsgType = {
@@ -119,7 +120,8 @@ export type getListGroupFoundType = {
         username: string,
         email?: string,
         firstName?: string,
-        lastName?: string
+        lastName?: string,
+        face: string | null
     },
     talking: talkingLastMsgType,
     cntUnreadMsg: number

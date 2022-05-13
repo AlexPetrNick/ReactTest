@@ -14,3 +14,112 @@
     width: 100%;
     height: 100%;
 }
+
+.wrapper_about_me {
+    width: 100%;
+    height: 230px;
+    display: flex;
+}
+
+.avatar__zone {
+    width: 30%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+}
+
+.image_avatar_zone {
+    border-radius: 150px;
+    width: 200px;
+    height: 200px;
+    box-shadow: 0px 5px 15px black;
+}
+
+.about_change_ava {
+    position: absolute;
+    top: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    transition: 0.6s;
+}
+
+.about__user__info {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 25px;
+}
+.about__user__info b{
+    color:black;
+}
+.about_username{
+    font-size: 35px;
+    margin-bottom: 30px;
+}
+
+.wrapper_edit_avatar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(79,79,79,0.59);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.close_edit_avatar {
+    width: 400px;
+    align-self: center;
+    display: flex;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.close_edit_avatar b{
+    justify-content:right;
+}
+
+.window_edit_avatar {
+    position: relative;
+    border: 1px solid green;
+    width: 400px;
+    height: auto;
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.wrapper_zone_edit_avatar {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.input_avatar {
+    margin-top: 10px;
+}
+
+.wrapper_button_set_avatar {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.setting_edit_avatar {
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

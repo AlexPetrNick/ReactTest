@@ -1,9 +1,4 @@
-import {Dispatch} from "redux";
-import {
-    authServer, dataUpdateType,
-    dataUserRegistrationAuth,
-} from "../../DAL/authRequest";
-import {setAccessRefreshToken, setValueLocalStorage} from "../../Service/Localstorage";
+import {dataUpdateType,} from "../../DAL/authRequest";
 
 //action name
 export const SET_INIT_INFO_USER = 'SET_INIT_INFO_USER'
@@ -12,31 +7,48 @@ export const SET_ERROR_MESSAGE_USER = 'SET_ERROR_MESSAGE_USER'
 export const SET_ROOMS = 'SET_ROOMS'
 export const SET_LOADING_USER = 'SET_LOADING_USER'
 export const UPDATE_USER_FETCH = 'UPDATE_USER_FETCH'
+export const SET_ORIG_IMAGE_USER = 'SET_ORIG_IMAGE_USER'
+export const SET_IMAGE_USER = 'SET_IMAGE_USER'
+export const CLEAR_ORIG_IMAGE_USER = 'CLEAR_ORIG_IMAGE_USER'
+export const CLEAR_IMAGE_USER = 'CLEAR_IMAGE_USER'
 
 
 //Action Creator
 
 
+type clearImageUserType = { type: typeof CLEAR_IMAGE_USER, }
+export const clearImageUser = ():clearImageUserType => ({type: CLEAR_IMAGE_USER})
+type clearOriginalImageUserType = {type: typeof CLEAR_ORIG_IMAGE_USER}
+export const clearOriginalImageUser = ():clearOriginalImageUserType => ({type: CLEAR_ORIG_IMAGE_USER
+})
+type setImageUserType = {
+    type: typeof SET_IMAGE_USER,
+    image: string
+}
+export const setImageUser = (image: string):setImageUserType => ({
+    type: SET_IMAGE_USER, image
+})
+type setOriginalImageUserType = {
+    type: typeof SET_ORIG_IMAGE_USER,
+    image: string
+}
+export const setOriginalImageUser = (image: string):setOriginalImageUserType => ({
+    type: SET_ORIG_IMAGE_USER,  image
+})
 type updateUserType = {
     type: typeof UPDATE_USER_FETCH,
     newData: dataUpdateType
 }
-
-
 export const updateUserAC = (newData: dataUpdateType): updateUserType => ({
     type: UPDATE_USER_FETCH, newData
 })
-
 type setLoadingUserType = {
     type: typeof SET_LOADING_USER,
     value: boolean
 }
-
-
 export const setLoadingUser = (value: boolean): setLoadingUserType => ({
     type: SET_LOADING_USER, value
 })
-
 type setInitInfoUserACType = {
     type: typeof SET_INIT_INFO_USER
     id: string
@@ -87,7 +99,11 @@ export type actionTypeUserReducer =
     setErrorMessageUserType |
     setRoomsType |
     setLoadingUserType |
-    updateUserType
+    updateUserType |
+    setImageUserType |
+    setOriginalImageUserType |
+    clearOriginalImageUserType |
+    clearImageUserType
 
 
 //Reducer
@@ -102,6 +118,8 @@ export type initUserStateType = {
     rooms?: Array<string>,
     isLoading: boolean,
     email: string | null,
+    originalImage: string | null,
+    cutImage: string | null,
 }
 
 const initState: initUserStateType = {
@@ -112,7 +130,9 @@ const initState: initUserStateType = {
     isAuth: false,
     email: null,
     errorText: null,
-    isLoading: false
+    isLoading: false,
+    originalImage: null,
+    cutImage: null,
 }
 
 
@@ -158,6 +178,30 @@ export const UserReducers = (state = initState, action: actionTypeUserReducer) =
                 ...state,
                 isLoading: action.value
             }
+        case SET_IMAGE_USER: {
+            return {
+                ...state,
+                cutImage: action.image
+            }
+        }
+        case SET_ORIG_IMAGE_USER: {
+            return {
+                ...state,
+                originalImage: action.image
+            }
+        }
+        case CLEAR_IMAGE_USER: {
+            return {
+                ...state,
+                cutImage: null
+            }
+        }
+        case CLEAR_ORIG_IMAGE_USER: {
+            return {
+                ...state,
+                originalImage: null
+            }
+        }
     }
     return state
 }

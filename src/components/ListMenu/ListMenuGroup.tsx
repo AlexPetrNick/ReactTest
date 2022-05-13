@@ -25,6 +25,7 @@ export const ListMenuGroup: FC = () => {
                 lastMessage={us.talking.text}
                 selectedUser={selected}
                 unreadMsg={us.cntUnreadMsg}
+                face={us.friend.face}
             />
         )
     })

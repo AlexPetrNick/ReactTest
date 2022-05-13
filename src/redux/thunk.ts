@@ -1,12 +1,18 @@
-import {authServer, dataUpdateType, dataUserRegistrationAuth, updateUser} from "../DAL/authRequest";
+import {
+    authServer,
+    dataUpdateType,
+    dataUserRegistrationAuth, loadCutImageToServer, loadImageFromServer,
+    loadOriginImageToServer,
+    updateUser
+} from "../DAL/authRequest";
 import {Dispatch} from "redux";
 import {setAccessRefreshToken} from "../Service/Localstorage";
 import {
     actionTypeUserReducer,
     setAuthUser,
-    setErrorMessageUser,
+    setErrorMessageUser, setImageUser,
     setInitInfoUserAC,
-    setLoadingUser,
+    setLoadingUser, setOriginalImageUser,
     setRooms,
     updateUserAC
 } from "./reducers/userReducers";
@@ -19,6 +25,7 @@ import {
 } from "./reducers/menuListReducer";
 import {actionDialogType, setDialogError, setDialogWind} from "./reducers/dialogReducer";
 import {dataDialogSendMsg, getTalkingGroupInfo, sendMessageDialog} from "../DAL/dialogsRequest";
+import {log} from "util";
 
 type authUserThunkAction = actionTypeUserReducer | actionMenuReducerType
 
@@ -37,11 +44,16 @@ export const authUserThunk = (data: dataUserRegistrationAuth) => {
                 if (data.message) {
                     dispatch(setErrorMessageUser(data.message))
                 } else {
-                    dispatch(setInitInfoUserAC(data.id, data.username))
+                    const email = data.infoUser.email ? data.infoUser.email : undefined
+                    const first = data.infoUser.firstName ? data.infoUser.firstName : undefined
+                    const last = data.infoUser.lastName ? data.infoUser.lastName : undefined
+                    dispatch(setInitInfoUserAC(data.id, data.infoUser.username, first, last, email))
                     dispatch(setGroupMenuList(data.dataDialog))
                     if (data.nameRooms) {
                         dispatch(setRooms(data.nameRooms))
                     }
+                    dispatch(setOriginalImageUser(data.images.origin))
+                    dispatch(setImageUser(data.images.cut))
                 }
                 dispatch(setAuthUser(true))
                 dispatch(setLoadingUser(false))
@@ -104,5 +116,27 @@ export const updateUserThunk = (dataUs:dataUpdateType) => {
                 dispatch(updateUserAC(d))
             })
             .catch(e => console.log(e.message))
+    }
+}
+
+
+export const uploadImageThunk = (type: string, data: any) => {
+    return (dispatch: Dispatch<authUserThunkAction>) => {
+
+        if (type === 'origin') {
+            loadOriginImageToServer(data)
+                .then(data => data.blob())
+                .then(blob => {
+                    const pict = URL.createObjectURL(blob)
+                    dispatch(setOriginalImageUser(pict))
+                })
+        } else {
+            loadCutImageToServer(data)
+                .then(data => data.blob())
+                .then(blob => {
+                    const pict = URL.createObjectURL(blob)
+                    dispatch(setImageUser(pict))
+                })
+        }
     }
 }
