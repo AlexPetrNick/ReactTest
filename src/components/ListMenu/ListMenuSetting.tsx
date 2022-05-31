@@ -1,4 +1,4 @@
-import {FC, MouseEvent} from "react";
+import React, {FC, MouseEvent} from "react";
 import './elementfoundmenu.css'
 import {ListMenuSettingElement} from "./ListMenuFoundElement/ListMenuSettingElement";
 import {useDispatch} from "react-redux";

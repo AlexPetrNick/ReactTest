@@ -1,4 +1,4 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import main from '../../static/loading/main.gif';
 
 export const LoadingMain:FC = () => {

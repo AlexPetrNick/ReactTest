@@ -22,6 +22,7 @@ export type AppDispatch = typeof store.dispatch
 
 
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const store = createStore<AppStateType, appAction, {}, {}>(
     reducers, composeEnhancers(
         applyMiddleware<AppDispatchType, any>(thunk as ThunkMiddleware<AppStateType, appAction>)

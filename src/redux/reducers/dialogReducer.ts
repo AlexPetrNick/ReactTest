@@ -7,8 +7,33 @@ export const SET_DEFAULT_STATE = 'SET_DEFAULT_STATE'
 export const ADD_MESSAGE_AFTER_EVENT = 'ADD_MESSAGE_AFTER_EVENT'
 export const SET_ALL_READ_MSG = 'SET_ALL_READ_MSG'
 export const SET_MODE_DIALOG = 'SET_MODE_DIALOG'
+export const SET_EDIT_MESSAGE = 'SET_EDIT_MESSAGE'
+export const DELETE_MESSAGE = 'DELETE_MESSAGE'
 
 //ACTION CREATOR
+
+type deleteMsgType = {
+    type: typeof DELETE_MESSAGE
+    idMessage: string
+}
+
+export const deleteMsg = (idMessage:string):deleteMsgType => ({
+    type: DELETE_MESSAGE, idMessage
+})
+
+type dataEditMsgType = {
+    id: string
+    prevText: string
+}
+
+type setEditMsgType = {
+    type: typeof SET_EDIT_MESSAGE
+    data: dataEditMsgType
+}
+
+export const setEditMsg = (data:dataEditMsgType):setEditMsgType => ({
+    type: SET_EDIT_MESSAGE, data
+})
 
 type setModeDialogType = {
     type: typeof SET_MODE_DIALOG,
@@ -101,6 +126,7 @@ export type messageType = {
     cntLike: number,
     cntWatch: number,
     whoRead: string[],
+    forwarded: string,
     createDate: string,
     "__v": number
 }
@@ -139,7 +165,9 @@ export type actionDialogType = setDialogWindType |
     setDefaultStateType |
     addMsgAfterEventType |
     setAllReadMsgType |
-    setModeDialogType
+    setModeDialogType |
+    setEditMsgType |
+    deleteMsgType
 
 
 const initStateDialog:stateDialogReducerType = {
@@ -184,9 +212,7 @@ export const DialogReducer = (state: stateDialogReducerType = initStateDialog, a
             }
         }
         case SET_DEFAULT_STATE: {
-            return {
-                ...initStateDialog
-            }
+            return initStateDialog
         }
         case ADD_MESSAGE_AFTER_EVENT: {
             const newArrayMsg = state.message?.map(a => a)
@@ -197,7 +223,6 @@ export const DialogReducer = (state: stateDialogReducerType = initStateDialog, a
             }
         }
         case SET_ALL_READ_MSG: {
-            console.log('readmsg')
             return {
                 ...state,
                 message: state.message?.map((msg:messageType) => {
@@ -211,6 +236,20 @@ export const DialogReducer = (state: stateDialogReducerType = initStateDialog, a
             return {
                 ...state,
                 mode: action.mode
+            }
+        }
+        case SET_EDIT_MESSAGE: {
+            return {
+                ...state,
+                message: state.message?.map((mes:messageType) => {
+                    return mes._id === action.data.id ? {...mes, prevText:action.data.prevText} : mes
+                })
+            }
+        }
+        case DELETE_MESSAGE: {
+            return  {
+                ...state,
+                message: state.message?.filter((mes:messageType) => mes._id !== action.idMessage)
             }
         }
     }

@@ -1,6 +1,5 @@
 import AvatarEditor from "react-avatar-editor";
-import {ChangeEvent, FC, MouseEvent, useRef, useState} from "react";
-import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
+import React, {ChangeEvent, FC, MouseEvent, useRef, useState} from "react";
 import {useDispatch} from "react-redux";
 import {clearOriginalImageUser} from "../../../redux/reducers/userReducers";
 import {uploadImageThunk} from "../../../redux/thunk";
@@ -35,7 +34,6 @@ export const AvatarEdit: FC<AvatarEditType> = ({original, cut, collapseWindow}) 
     const onClickSetAvatar = (e: MouseEvent<HTMLButtonElement>) => {
         if (editor) {
             const canvasScaled = editor.current.getImageScaledToCanvas()
-            console.log(editor.current)
             canvasScaled.toBlob((blob: any) => {
                 dispatchAC(uploadImageThunk('cut', blob))
             })

@@ -1,5 +1,5 @@
-import {FC, useState, MouseEvent, FocusEventHandler} from "react";
-import {AvatarEdit, AvatarEditType} from "../AvatarEdit/AvatarEdit";
+import React, {FC, MouseEvent, useState} from "react";
+import {AvatarEdit} from "../AvatarEdit/AvatarEdit";
 import noAva from '../../../static/image/noavatar.jpg'
 import '../settingmenu.css'
 import {useSelector} from "react-redux";
@@ -17,19 +17,10 @@ export const AboutMe:FC<AboutMeType> = ({avatarData}) => {
     const [collapseEdit, setCollapseEdit] = useState<boolean>(true)
     const [hoverTextChange, setHoverText] = useState<boolean>(false)
     const authInfo = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
-
-
-
-    const avatarImage = () => {
-        return avatarData.cut ? avatarData.cut : noAva
-    }
-
+    const avatarImage = () => avatarData.cut ? avatarData.cut : noAva
     const onMouseHover = (e:MouseEvent<HTMLImageElement>) => setHoverText(true)
     const onMouseLeave = (e:MouseEvent<HTMLImageElement>) => setHoverText(false)
-    const onClickEdit = (e:MouseEvent<HTMLDivElement>) => {
-        setCollapseEdit(false)
-        console.log(collapseEdit)
-    }
+    const onClickEdit = (e:MouseEvent<HTMLDivElement>) => setCollapseEdit(false)
     const collapseWindow = () => setCollapseEdit(true)
 
     return (
@@ -66,10 +57,6 @@ export const AboutMe:FC<AboutMeType> = ({avatarData}) => {
                     <b>E-mail: </b>
                     {authInfo.email}
                 </div>
-
-
-
-
             </div>
         </div>
     )

@@ -1,78 +1,40 @@
-import {FC} from "react";
-import './registration.css'
-import {SubmitHandler, useForm} from 'react-hook-form'
-import {useDispatch, useSelector} from "react-redux";
-import {Dispatch} from "redux";
-import {AppStateType} from "../../redux/react-redux";
-import {actionTypeUserReducer} from "../../redux/reducers/userReducers";
-import {ThunkAction} from "redux-thunk";
-import {registrationUserRequest} from "../../DAL/authRequest";
-import {Navigate, useNavigate} from "react-router-dom";
+import React, {FC, useState} from 'react';
+import './registration.css';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppStateType} from '../../redux/react-redux';
+import {LoginRegistration} from './LoginRegistration/LoginRegistration';
+import {drawErrorsCb} from '../../Service/commonFuncComponents';
+import {PhoneRegistration} from './PhoneRegistration/PhoneRegistration';
 
-type formValues = {
-    username:string,
-    password:string,
-    passwordRe:string,
-}
+type registrationType = 'login'|'phone'|'sn'
 
 export const Registration: FC = () => {
-    const selector = useSelector((state: AppStateType) => state.UserReducers)
-    const dispatchUser = useDispatch<Dispatch<actionTypeUserReducer>>()
-    const history = useNavigate()
-
-    const {register, handleSubmit, watch, setValue, formState: { errors }} = useForm<formValues>({shouldUseNativeValidation: true})
-    const onSubmit: SubmitHandler<formValues> = (data) => {
-        const { passwordRe, ...body} = data
-        registrationUserRequest(body)
-        setValue("username", '')
-        setValue("password", '')
-        setValue("passwordRe", '')
-        history('/', { replace: true})
-    }
-    const {password, ...dataForm} = watch()
+  const error = useSelector<AppStateType, string | null>((state) => state.UserReducers.errorText);
+  const [modeRegistration, setModeRegistration] = useState<registrationType>('login');
+  const dispatch = useDispatch();
+  const drawError = () => error && drawErrorsCb(error, dispatch);
 
 
+  const drawMenuRegistration = () => {
+    if (modeRegistration === 'login') return <LoginRegistration />;
+    if (modeRegistration === 'phone') return <PhoneRegistration />;
+  };
+  const onCLickMenu = (mode:registrationType) => setModeRegistration(mode);
 
-    return (
-        <div className={'wrapper_registration'}>
-            <h2>Регистрация</h2>
-
-            <form className={'form_registration'} onSubmit={handleSubmit(onSubmit)} >
-                <div className="login_reg_label">Никнейм пользователя</div>
-                <input
-                    placeholder={'Введите логин'}
-                    {...register('username', {
-                        required: 'This is field requeier',
-                        minLength:5
-                    })}
-                    className="psw_log_reg_inp"
-                />
-                <div className="psw_reg_lbl">Пароль</div>
-                <input
-                    {...register('password', {
-                        required: 'This is field requeier',
-                        minLength:5
-                    })}
-                    type={'password'}
-                    placeholder={'Введите пароль'}
-                    className="psw_log_reg_inp"/>
-                <div className="psw_reg_lbl_conf">Повторите пароль</div>
-                <input
-                    {...register('passwordRe', {
-                        required: 'This is field requeier',
-                        minLength: 5,
-                        validate: (value:string) => value === password || 'Пароли должны быть одинаковы'
-                    })}
-                    type={'password'}
-                    placeholder={'Введите пароль'}
-                    className="psw_log_reg_inp"
-                />
-
-                <button disabled={!!errors.passwordRe} className="btn_login">Войти</button>
-            </form>
-            <div className={'message_error'}>
-                {errors.passwordRe && errors.passwordRe.message}
-            </div>
+  return (
+    <div className={'wrapper_registration'}>
+      <span className='text_registration'>Регистрация</span>
+      <div className='wrapper_type_registration'>
+        <div className='select_type_registration'>
+          <div className='item_menu_registration' onClick={() => onCLickMenu('login')}>Логин</div>
+          <div className='item_menu_registration' onClick={() => onCLickMenu('phone')}>Телефон</div>
+          <div className='item_menu_registration'>Соц.сети</div>
         </div>
-    )
-}
+        <div className='body_type_registration'>
+          {drawMenuRegistration()}
+        </div>
+      </div>
+      {drawError()}
+    </div>
+  );
+};

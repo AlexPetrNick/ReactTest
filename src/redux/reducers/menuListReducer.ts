@@ -111,7 +111,7 @@ type talkingLastMsgType = {
     cntLike: number,
     cntWatch: number,
     "whoRead": string[],
-    "createDate": string,
+    "createDate": string
 }
 
 export type getListGroupFoundType = {
@@ -124,7 +124,8 @@ export type getListGroupFoundType = {
         face: string | null
     },
     talking: talkingLastMsgType,
-    cntUnreadMsg: number
+    cntUnreadMsg: number,
+    name: string
 }
 
 type modeMenu = "group" | "menu" | "find"
@@ -146,7 +147,7 @@ const initTypeMenuListReducer:menuListReducerType = {
     groupList: undefined,
     errors: [],
     selectedUser: undefined,
-    isLoadingList: false
+    isLoadingList: true
 }
 
 export type actionMenuReducerType = setListUserACType |
@@ -188,6 +189,7 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             }
         }
         case UPDATE_MSG_FROM_USER: {
+            console.log(action)
             return {
                 ...state,
                 groupList: state.groupList?.map((elem:getListGroupFoundType) => {

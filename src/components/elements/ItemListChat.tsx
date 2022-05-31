@@ -1,4 +1,4 @@
-import {FC, MouseEvent} from "react";
+import React, {FC, MouseEvent} from "react";
 import '../../App.css'
 import {useDispatch} from "react-redux";
 import {getDialogInfoThunk} from "../../redux/thunk";

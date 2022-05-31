@@ -1,9 +1,8 @@
 import "./topmenuuser.css"
 import {AppDispatchType, AppStateType} from "../../../redux/react-redux";
 import {useDispatch, useSelector} from "react-redux";
-import {FC, MouseEvent, useEffect} from "react";
+import React, {FC, MouseEvent} from "react";
 import {setModeListAC} from "../../../redux/reducers/menuListReducer";
-import {listUsersFoundThunk} from "../../../redux/thunk";
 import {initUserStateType} from "../../../redux/reducers/userReducers";
 
 
@@ -14,7 +13,7 @@ export const TopMenuUser:FC = () => {
     const dispatchAC = useDispatch()
 
     const onClickSetMenu = (e: MouseEvent<|HTMLDivElement>) => {
-        let typeMenu = ""
+        const typeMenu = ""
         if (stateList.mode === "menu") {
             dispatchAC(setModeListAC("group"))
         } else {

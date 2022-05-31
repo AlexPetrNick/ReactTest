@@ -9,6 +9,8 @@ export const getValueLocalStorage = (key:string):string|undefined => {
     return value ? value : undefined
 }
 
+export const deleteValueLocalStorage = (key:string) => localStorage.removeItem(key)
+
 export const clearStorage = () => {
     localStorage.clear()
 }

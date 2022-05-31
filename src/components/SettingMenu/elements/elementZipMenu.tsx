@@ -1,4 +1,4 @@
-import {ChangeEvent, FC, FocusEvent, MouseEvent, useState} from "react";
+import React, {ChangeEvent, FC, FocusEvent, MouseEvent, useState} from "react";
 import {TranslateWord} from "../../../config/translate";
 
 type ElementZipMenuType = {

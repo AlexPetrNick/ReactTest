@@ -1,4 +1,4 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import '../App.css'
 import {ListMenuGroup} from "./ListMenu/ListMenuGroup";
 import {useSelector} from "react-redux";
@@ -15,7 +15,10 @@ import {SettingMenu} from "./SettingMenu/SettingMenu";
 
 
 export const MainContainer: FC = (props) => {
-    const {rooms, ...authInfo} = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
+    const {
+        rooms,
+        ...authInfo
+    } = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
     const stateList = useSelector((state: AppStateType) => state.menuListReducer)
     const stateListDialog = useSelector((state: AppStateType) => state.DialogReducer)
     const {
@@ -24,20 +27,22 @@ export const MainContainer: FC = (props) => {
     } = useSelector<AppStateType, initUserStateType>((state: AppStateType) => state.UserReducers)
     const {
         sendMessageEvent,
-        readAllMsg
+        readAllMsg,
+        sendMessageForwardEvent
     } = useChat(rooms, stateUser.id)
 
 
     const drawMenu = () => {
         if (stateList.mode === "find") return <ListMenuFound/>
         if (stateList.mode === "menu") return <ListMenuSetting/>
-        return <ListMenuGroup />
+        return <ListMenuGroup/>
     }
 
     const drawDialog = () => {
         if (stateListDialog.mode === "dialog") {
             if (stateListDialog.userInfo.username) {
                 return <DialogUser
+                    sendMessageForwardEvent={sendMessageForwardEvent}
                     readAllMsg={readAllMsg}
                     sendMessage={sendMessageEvent}
                     dialogInfo={stateListDialog}
@@ -53,17 +58,17 @@ export const MainContainer: FC = (props) => {
         <>
             {
                 isLoading ?
-                    <LoadingMain/>
-                    :
-                    <div className={'wrapper_main'}>
-                        <div className="wrapper_left">
-                            <TopMenuUser/>
-                            {drawMenu()}
-                        </div>
-                        <div className="wrapper_right">
-                            {drawDialog()}
-                        </div>
+                <LoadingMain/>
+                :
+                <div className={'wrapper_main'}>
+                    <div className="wrapper_left">
+                        <TopMenuUser/>
+                        {drawMenu()}
                     </div>
+                    <div className="wrapper_right">
+                        {drawDialog()}
+                    </div>
+                </div>
             }
         </>
     )

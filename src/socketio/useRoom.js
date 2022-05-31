@@ -33,8 +33,7 @@ export const useChat = (roomsId, idUser) => {
             joinNewRoom(arg)
         })
 
-        socketRef.current.on('msg:newcr', (id, senderId, talkId, msg, getId) => {
-            console.log(id)
+        socketRef.current.on('msg:newcr', (id, senderId, talkId, msg, getId, forwarded) => {
             const newMsg = {
                 _id: id,
                 userId: senderId,
@@ -44,11 +43,12 @@ export const useChat = (roomsId, idUser) => {
                 cntLike: 0,
                 cntWatch: 0,
                 whoRead: [senderId],
+                forwarded: forwarded ? forwarded : '',
                 createDate: new Date().toISOString(),
                 "__v": 0
             }
             const {__v, ...msgList} = newMsg
-
+            console.log(id, senderId, talkId, msg, getId, forwarded)
             dispatchAC(addMsgAfterEvent(newMsg))
             dispatchAC(updateMsgFromUser(getId, msgList))
             if (senderId !== idUser) dispatchAC(incrementUnreadMsg(senderId))
@@ -57,7 +57,6 @@ export const useChat = (roomsId, idUser) => {
         socketRef.current.on('user:newfriend', () => {
             dispatchAC(listGroupFoundThunk())
         })
-
 
 
         socketRef.current.on('hi:user', (a) => {
@@ -71,6 +70,10 @@ export const useChat = (roomsId, idUser) => {
 
     const sendMessageEvent = (id, message, room, curId) => {
         socketRef.current.emit('msg:new', id, message, room, curId)
+    }
+
+    const sendMessageForwardEvent = (id, message, room, curId, forw) => {
+        socketRef.current.emit('msg:new_forward', id, message, room, curId, forw)
     }
 
     const seeMessage = (idMessage, curId) => {
@@ -87,5 +90,5 @@ export const useChat = (roomsId, idUser) => {
     }
 
 
-    return {seeMessage, sendMessageEvent, readAllMsg}
+    return {seeMessage, sendMessageEvent, readAllMsg, sendMessageForwardEvent}
 }

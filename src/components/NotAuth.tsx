@@ -1,13 +1,12 @@
-import React, {FC} from "react";
+import React, {FC, useEffect} from "react";
 import './norregister.css'
 import {Link} from "react-router-dom";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {appAction, AppDispatch, AppDispatchType, AppStateType} from "../redux/react-redux";
-import { setErrorMessageUser} from "../redux/reducers/userReducers";
-import {ErrorsAuth} from "./elements/errors/errorsAuth";
-import {authUserThunk, listGroupFoundThunk} from "../redux/thunk";
-import {setModeListAC} from "../redux/reducers/menuListReducer";
+import {AppDispatchType, AppStateType} from "../redux/react-redux";
+import {authUserThunk, listGroupFoundThunk, setConnectServerThunk} from "../redux/thunk";
+import {drawErrorsCb} from "../Service/commonFuncComponents";
+import {initUserStateType} from "../redux/reducers/userReducers";
 
 interface formAuthType  {
     username: string,
@@ -15,27 +14,24 @@ interface formAuthType  {
 }
 
 export const NotAuth:FC = (props) => {
-    const errorsReq = useSelector<AppStateType, string | null >((state) => state.UserReducers.errorText)
+    const {errorText:errorsReq, haveConnect} = useSelector<AppStateType, initUserStateType >((state) => state.UserReducers)
     const dispatch: AppDispatchType = useDispatch()
     const dispatchAC = useDispatch()
+
 
     const {register, setValue, handleSubmit, formState: { errors }} = useForm<formAuthType>({shouldUseNativeValidation:true})
     const onSubmitForm:SubmitHandler<formAuthType> = (data):void => {
         dispatch(authUserThunk(data))
-        dispatch(listGroupFoundThunk())
+        dispatch(listGroupFoundThunk([]))
         setValue("username", '')
         setValue("password", '')
     }
 
-    const drawErrors = () => {
-        if (errorsReq) {
-            setTimeout(() => {
-                dispatchAC(setErrorMessageUser(''));
-            }, 3000)
-            return <ErrorsAuth message={errorsReq} />
-        }
-    }
+    const drawError = () => errorsReq && drawErrorsCb(errorsReq, dispatchAC)
 
+    useEffect(() => {
+        dispatch(setConnectServerThunk())
+    }, [])
 
     return (
         <div className={'wrapper_not_register'}>
@@ -73,9 +69,9 @@ export const NotAuth:FC = (props) => {
                     className="psw_log_auth_inp"
                 />
                 <button disabled={!!errors.username || !!errors.password} className="btn_login">Войти</button>
-                <Link className={'link_registration'} to={'/registration'}>Регистрация</Link>
+                <Link hidden={!haveConnect} className={'link_registration'} to={'/registration'}>Регистрация</Link>
             </form>
-            {drawErrors()}
+            {drawError()}
             {/*<div className="more_info"></div>*/}
         </div>
     )

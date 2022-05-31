@@ -1,20 +1,19 @@
 import {setting} from "../config/config";
-import {getValueLocalStorage} from "../Service/Localstorage";
 import {getBearer} from "./common";
 
 
 const {serverDns, ...data} = setting
 
-
-const token = getValueLocalStorage('access')
-const bearer = `Bearer ${token}`
-
-
-export const getInitData = () => {
-    fetch(`${serverDns}/auth/userdata/`, {
+export const pingServer = () => {
+    return fetch(serverDns, {
         mode:"cors",
     })
-        .then(data => data.json())
+}
+
+export const getInitData = () => {
+    return fetch(`${serverDns}/auth/userdata/`, {
+        mode:"cors",
+    })
 }
 
 export type dataUserRegistrationAuth = {
@@ -32,8 +31,6 @@ export const registrationUserRequest = (data:dataUserRegistrationAuth) => {
         mode: "cors"
     })
         .then(data => data.json())
-        .then(json => json)
-        .catch(e => console.log(e))
 }
 
 

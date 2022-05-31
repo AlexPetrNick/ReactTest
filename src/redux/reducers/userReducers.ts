@@ -11,9 +11,14 @@ export const SET_ORIG_IMAGE_USER = 'SET_ORIG_IMAGE_USER'
 export const SET_IMAGE_USER = 'SET_IMAGE_USER'
 export const CLEAR_ORIG_IMAGE_USER = 'CLEAR_ORIG_IMAGE_USER'
 export const CLEAR_IMAGE_USER = 'CLEAR_IMAGE_USER'
+export const SET_CONNECT_SERVER = 'SET_CONNECT_SERVER'
 
 
 //Action Creator
+
+type setConnectServerType = { type: typeof SET_CONNECT_SERVER }
+
+export const setConnectServer = ():setConnectServerType => ({ type: SET_CONNECT_SERVER})
 
 
 type clearImageUserType = { type: typeof CLEAR_IMAGE_USER, }
@@ -103,7 +108,8 @@ export type actionTypeUserReducer =
     setImageUserType |
     setOriginalImageUserType |
     clearOriginalImageUserType |
-    clearImageUserType
+    clearImageUserType |
+    setConnectServerType
 
 
 //Reducer
@@ -120,6 +126,7 @@ export type initUserStateType = {
     email: string | null,
     originalImage: string | null,
     cutImage: string | null,
+    haveConnect: boolean
 }
 
 const initState: initUserStateType = {
@@ -133,12 +140,13 @@ const initState: initUserStateType = {
     isLoading: false,
     originalImage: null,
     cutImage: null,
+    haveConnect: true
 }
 
 
 export const UserReducers = (state = initState, action: actionTypeUserReducer) => {
     switch (action.type) {
-        case SET_INIT_INFO_USER:
+        case SET_INIT_INFO_USER: {
             const firstName = action.firstName ? action.firstName : null
             const lastName = action.lastName ? action.lastName : null
             const email = action.email ? action.email : null
@@ -149,9 +157,8 @@ export const UserReducers = (state = initState, action: actionTypeUserReducer) =
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
-            }
+            }}
         case UPDATE_USER_FETCH:
-            console.log(action.newData.firstName)
             return {
                 ...state,
                 firstName: action.newData.firstName ? String(action.newData.firstName) : null,
@@ -200,6 +207,12 @@ export const UserReducers = (state = initState, action: actionTypeUserReducer) =
             return {
                 ...state,
                 originalImage: null
+            }
+        }
+        case SET_CONNECT_SERVER: {
+            return  {
+                ...state,
+                haveConnect: true
             }
         }
     }

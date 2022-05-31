@@ -61,3 +61,27 @@
 .wrapper_elem_setting:hover {
     background-color: rgba(6, 125, 0, 0.62);
 }
+
+
+.list_chats {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    min-height: 91%;
+    max-height: 91%;
+    min-width: 97%;
+    max-width: 97%;
+}
+
+.field_found_users {
+    overflow-y: auto;
+}
+
+
+
+.wrapper_for_element_find {
+    width: 95%;
+    min-height: 50px;
+    margin-top: 0;
+}

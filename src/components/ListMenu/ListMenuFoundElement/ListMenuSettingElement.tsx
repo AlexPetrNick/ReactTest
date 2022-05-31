@@ -1,6 +1,5 @@
-import {FC, MouseEvent} from "react";
+import React, {FC} from "react";
 import '../elementfoundmenu.css'
-import {useDispatch} from "react-redux";
 
 type ListMenuSettingElementType = {
     itemName: string,

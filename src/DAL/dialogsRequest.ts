@@ -35,4 +35,36 @@ export const sendMessageDialog = (data:dataDialogSendMsg) => {
         .then(data => data.json())
 }
 
+export type dataDialogSendMsgEditType = {
+    idMessage: string,
+    editMessage: string
+}
+
+export const sendMessageEdit = (data:dataDialogSendMsgEditType) => {
+    return fetch(`${serverDns}/dialog/edit_message`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        mode:"cors",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        },
+    })
+        .then(data => data.json())
+}
+
+
+export const deleteMessage = (idMessage: string) => {
+    return fetch(`${serverDns}/dialog/delete_message`, {
+        method: "DELETE",
+        body: JSON.stringify({idMessage:idMessage}),
+        mode:"cors",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        },
+    })
+        .then(data => data.json())
+}
+
 

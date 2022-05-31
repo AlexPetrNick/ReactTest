@@ -1,9 +1,8 @@
-import {FC, MouseEvent, useState} from "react";
+import React, {FC, MouseEvent, useState} from "react";
 import './zipmenu.css'
 import {ElementZipMenu} from "./elementZipMenu";
 import {useDispatch} from "react-redux";
 import {updateUserThunk} from "../../../redux/thunk";
-import {AvatarEdit} from "../AvatarEdit/AvatarEdit";
 
 
 type initType = {
@@ -29,7 +28,7 @@ export const ZipMenu: FC<initType> = (props) => {
             return (
                 <ElementZipMenu titlePosition={keyElem} valueField={value[index]}
                                 editable={!(props.uneditField.includes(keyElem))}
-                                changeFieldState={changeFieldState}
+                                changeFieldState={changeFieldState} key={index}
                 />
             )
         })

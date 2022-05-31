@@ -1,8 +1,7 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import './settingmenu.css'
 import {initUserStateType} from "../../redux/reducers/userReducers";
 import {ZipMenu} from "./elements/zipMenu";
-import {AvatarEdit} from "./AvatarEdit/AvatarEdit";
 import {AboutMe} from "./AboutMe/AboutMe";
 
 type settingMenuType = {
