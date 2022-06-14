@@ -125,7 +125,6 @@ export const updateUserGroupListThunk = (query: dataArrayQueryType) => {
     return (dispatch: Dispatch<actionMenuReducerType>) => {
         getListGroupFound(query)
             .then(a => {
-                console.log(a.data[0].friend)
                 dispatch(updateMsgFromUser(a.data[0].friend.id, a.data[0].talking))
                 return a
             })
@@ -137,8 +136,8 @@ export const getDialogInfoThunk = (user: string | null) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         getTalkingGroupInfo(user)
             .then(data => {
-                console.log(data)
-                dispatch(setDialogWind(data.userQuery, data.group[0], data.messages))
+                const face = data.faceFriend ? data.faceFriend : ''
+                dispatch(setDialogWind(data.userQuery, data.group[0], data.messages, face))
             })
             .catch(e => dispatch(setDialogError(e.message)))
     }
@@ -166,7 +165,7 @@ export const sendDialogMsgEditThunk = (data: dataDialogSendMsgEditType) => {
     }
 }
 
-export const deleteMsgThunk = (idMessage:string) => {
+export const deleteMsgThunk = (idMessage:string[]) => {
     return (dispatch: Dispatch<actionDialogType>) => {
         deleteMessage(idMessage)
             .then(dataJson => {

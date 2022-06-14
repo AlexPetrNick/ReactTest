@@ -16,7 +16,7 @@ export const MessageSetting: FC<MessageSettingType> = ({
                                                        }) => {
     const onClickEdit = (e: MouseEvent<HTMLDivElement>) => setFormRedact(message.prevText ? message.prevText : message.text, message._id)
     const onClickDelete = (e: MouseEvent<HTMLDivElement>) => deleteMessageCb(message._id)
-    const onClickForward = (e: MouseEvent<HTMLDivElement>) => drawForwardMenu(message.prevText ? message.prevText : message.text, message.userId)
+    const onClickForward = (e: MouseEvent<HTMLDivElement>) => drawForwardMenu(message._id, message.userId)
     const styleWrpMenuSett = friendMessage ? 'wrp_menu_msg_sett_fr' : 'wrp_menu_msg_sett'
     return (
         <div className={styleWrpMenuSett}>

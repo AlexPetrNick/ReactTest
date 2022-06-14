@@ -1,0 +1,71 @@
+.wrapper_clip_menu {
+    background-color: rgba(0,0,0,0.3);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clip_menu {
+    border: 2px solid green;
+    width: 900px;
+    height: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 1px 1px 10px black;
+}
+
+.clip_menu_grp_select {
+    width: 30%;
+    height: 100%;
+    border: 1px solid green;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+}
+.clip_menu_items_group {
+    width: 70%;
+    height: 100%;
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+}
+
+.clip_menu_grp_item {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid green;
+    cursor: pointer;
+}
+
+.clip_menu_grp_item:hover {
+    background-color: #068f04;
+}
+
+.grid_items {
+    height: 100%;
+
+}
+
+.selected_items_group {
+    background-color: green;
+}
+
+.empty_items_menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.question_add {
+    color: green;
+    text-decoration: underline;
+    cursor: pointer;
+}

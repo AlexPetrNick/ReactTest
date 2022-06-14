@@ -28,7 +28,8 @@ export const MainContainer: FC = (props) => {
     const {
         sendMessageEvent,
         readAllMsg,
-        sendMessageForwardEvent
+        sendMessageForwardEvent,
+        sendMessageForwardArrayEvent
     } = useChat(rooms, stateUser.id)
 
 
@@ -46,6 +47,7 @@ export const MainContainer: FC = (props) => {
                     readAllMsg={readAllMsg}
                     sendMessage={sendMessageEvent}
                     dialogInfo={stateListDialog}
+                    sendMessageForwardArrayEvent={sendMessageForwardArrayEvent}
                 />
             }
             return <DialogEmpty/>

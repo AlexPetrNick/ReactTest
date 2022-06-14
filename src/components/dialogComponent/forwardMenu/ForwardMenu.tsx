@@ -1,28 +1,24 @@
-import React, {FC, useState, MouseEvent} from "react";
+import React, {FC, MouseEvent, useState} from "react";
 import {getListGroupFoundType} from "../../../redux/reducers/menuListReducer";
 import '../dialogStyle.css'
 import noAva from '../../../static/image/noavatar.jpg'
 import {ItemForwardMenu} from "./ItemForwardMenu";
-import {getValueLocalStorage} from "../../../Service/Localstorage";
-import {setting} from "../../../config/config";
-import {useDispatch} from "react-redux";
-import {getDialogInfoThunk, listGroupFoundThunk} from "../../../redux/thunk";
+import {objectForwMsg} from "../../../redux/reducers/dialogReducer";
 
 type ForwardMenuType = {
+    sendForwardMsg: (selectedUser:string[]) => void
     groupList: Array<getListGroupFoundType>
-    message: string
-    sendMessageForwardEvent: (id:string, message:string, room:string, curId:string, forw:string) => void
-    currentUserId: string
+    forwardMenuSet: Array<objectForwMsg>
     closeForwardMenu: () => void
-    usernameCurrDlg: string
+    userMsg?: string
 }
 
-export const ForwardMenu:FC<ForwardMenuType> = ({message, groupList, sendMessageForwardEvent,
-                                                currentUserId, closeForwardMenu, usernameCurrDlg}) => {
-    const dispatch = useDispatch()
+export const ForwardMenu:FC<ForwardMenuType> = ({forwardMenuSet, groupList,
+                                                    closeForwardMenu, sendForwardMsg,
+                                                userMsg}) => {
+    const selectedMessage = forwardMenuSet.map(msgMenu => msgMenu.messageId)
     const [selectedUser, setSelectedUser] = useState<string[]>([])
     const styleBtn = selectedUser.length ? 'btn_send_frwd' : 'btn_send_frwd disabled_btn'
-
     const toggleSelectUser = (idUser: string) => {
         if (selectedUser.includes(idUser)) {
             const tempSelectedUser = [...selectedUser]
@@ -33,16 +29,6 @@ export const ForwardMenu:FC<ForwardMenuType> = ({message, groupList, sendMessage
         }
     }
 
-    const sendForwardMsg = () => {
-        const filtred = groupList.filter((group:getListGroupFoundType) => selectedUser.includes(group.friend.id))
-        const nameForw = getValueLocalStorage(setting.nameForwardVariable)
-        filtred.map((group:getListGroupFoundType) => {
-            sendMessageForwardEvent(group.friend.id, message, group.name, currentUserId, String(nameForw))
-        })
-        closeForwardMenu()
-        dispatch(listGroupFoundThunk([]))
-        dispatch(getDialogInfoThunk(usernameCurrDlg))
-    }
     const close_forward = (e:MouseEvent<HTMLDivElement>) => closeForwardMenu()
 
     const drawItems = groupList.map((item:getListGroupFoundType, index) => {
@@ -56,19 +42,22 @@ export const ForwardMenu:FC<ForwardMenuType> = ({message, groupList, sendMessage
         />
     })
 
+    const drawMsgTop = selectedMessage.length ? 'Количество сообщении:' : 'Пересылаемое сообщение'
+    const drawMsgOrCnt = selectedMessage.length > 1 ? selectedMessage.length : selectedMessage[0][1]
+
     return (
         <div className='wrapper_frwd_menu'>
             <div className='close_frwd_menu'><b onClick={close_forward}>X</b></div>
             <div className='frwd_menu'>
                 <div className="header_frwd">
-                    <div className='frwd_msg_top_send_to'>Переслать сообщение:</div>
-                    <div className='frwd_msg_top'>{message}</div>
+                    <div className='frwd_msg_top_send_to'>{drawMsgTop}</div>
+                    <div className='frwd_msg_top'>{drawMsgOrCnt}</div>
                 </div>
                 <div className="body_frwd">
                     {drawItems}
                 </div>
                 <div className="btm_frwd">
-                    <button onClick={() => sendForwardMsg()} disabled={!selectedUser.length} className={styleBtn}>Отправить</button>
+                    <button onClick={() => sendForwardMsg(selectedUser)} disabled={!selectedUser.length} className={styleBtn}>Отправить</button>
                 </div>
             </div>
         </div>

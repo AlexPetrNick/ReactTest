@@ -9,15 +9,62 @@ export const SET_ALL_READ_MSG = 'SET_ALL_READ_MSG'
 export const SET_MODE_DIALOG = 'SET_MODE_DIALOG'
 export const SET_EDIT_MESSAGE = 'SET_EDIT_MESSAGE'
 export const DELETE_MESSAGE = 'DELETE_MESSAGE'
+export const SET_POP_UP_MESS = 'SET_POP_UP_MESS'
+export const SET_STATE_FORM = 'SET_STATE_FORM'
+export const SET_ORIGINAL_MESSAGE = 'SET_ORIGINAL_MESSAGE'
+export const SET_FORWARD_MENU_SET = 'SET_FORWARD_MENU_SET'
+export const SET_MODE_SELECTION = 'SET_MODE_SELECTION'
 
 //ACTION CREATOR
 
-type deleteMsgType = {
-    type: typeof DELETE_MESSAGE
-    idMessage: string
+type setModeSelectionType = {
+    type: typeof SET_MODE_SELECTION,
+    modeBool: boolean
 }
 
-export const deleteMsg = (idMessage:string):deleteMsgType => ({
+export const setModeSelection = (modeBool: boolean):setModeSelectionType => ({
+    type: SET_MODE_SELECTION, modeBool
+})
+
+type setForwardMenuSetType = {
+    type: typeof SET_FORWARD_MENU_SET,
+    arrObjForMsg: objectForwMsg[]
+}
+
+export const setForwardMenuSet = (arrObjForMsg: objectForwMsg[]):setForwardMenuSetType => ({
+    type: SET_FORWARD_MENU_SET, arrObjForMsg
+})
+
+type setOriginalMessageType = {
+    type: typeof SET_ORIGINAL_MESSAGE,
+    editMsgObj: editMsgObjType
+}
+export const setOriginalMessage = (editMsgObj: editMsgObjType):setOriginalMessageType => ({
+    type: SET_ORIGINAL_MESSAGE, editMsgObj
+})
+
+type setStateFormType = {
+    type: typeof SET_STATE_FORM,
+    state: stateFormTypeDialog
+}
+export const setStateForm = (state: stateFormTypeDialog):setStateFormType => ({
+    type: SET_STATE_FORM, state
+})
+
+type setPopUpMessType = {
+    type: typeof SET_POP_UP_MESS,
+    message: string
+}
+export const setPopUpMess = (message:string):setPopUpMessType => ({
+    type: SET_POP_UP_MESS, message
+})
+
+type deleteMsgType = {
+    type: typeof DELETE_MESSAGE
+    idMessage: string[]
+}
+
+export const deleteMsg = (idMessage:string[]):deleteMsgType => ({
     type: DELETE_MESSAGE, idMessage
 })
 
@@ -76,14 +123,16 @@ type setDialogWindType = {
     type: typeof SET_DIALOG,
     userInfo: userInfoType,
     groupInfo: groupInfoType,
-    messages: messageType[]
+    messages: messageType[],
+    faceFriend: string
 }
 
 export const setDialogWind = (
     userInfo: userInfoType,
     groupInfo: groupInfoType,
-    messages: messageType[]): setDialogWindType => ({
-    type: SET_DIALOG, userInfo, groupInfo, messages
+    messages: messageType[],
+    faceFriend: string): setDialogWindType => ({
+    type: SET_DIALOG, userInfo, groupInfo, messages, faceFriend
 })
 
 type setDialogErrorType = {
@@ -148,7 +197,18 @@ export type userInfoType = {
     lastName?: string,
 }
 
+export type objectForwMsg = {
+    username: string,
+    messageId: string
+}
+
+export type editMsgObjType = {
+    originalMsg: string | null
+    idMsg: string | null
+}
+
 export type modeDialog = 'dialog' | 'setting'
+export type stateFormTypeDialog =  'normal' | 'edit' | 'mforw'
 
 export type stateDialogReducerType = {
     userInfo: userInfoType
@@ -156,6 +216,12 @@ export type stateDialogReducerType = {
     message?: Array<messageType>
     error: string | null
     mode: modeDialog
+    popUpMess: string
+    originalMessage: editMsgObjType
+    stateForm: stateFormTypeDialog
+    forwardMenuSet: Array<objectForwMsg>
+    modeSelection: boolean
+    faceFriend: string
 }
 
 export type actionDialogType = setDialogWindType |
@@ -167,7 +233,12 @@ export type actionDialogType = setDialogWindType |
     setAllReadMsgType |
     setModeDialogType |
     setEditMsgType |
-    deleteMsgType
+    deleteMsgType |
+    setPopUpMessType |
+    setStateFormType |
+    setOriginalMessageType |
+    setForwardMenuSetType |
+    setModeSelectionType
 
 
 const initStateDialog:stateDialogReducerType = {
@@ -176,7 +247,13 @@ const initStateDialog:stateDialogReducerType = {
     },
     groupInfo: null,
     error: null,
-    mode:"dialog"
+    mode:"dialog",
+    popUpMess: '',
+    stateForm: 'normal',
+    originalMessage: {originalMsg: '', idMsg: ''},
+    forwardMenuSet: [],
+    modeSelection: false,
+    faceFriend: ''
 }
 
 export const DialogReducer = (state: stateDialogReducerType = initStateDialog, action: actionDialogType): stateDialogReducerType => {
@@ -186,7 +263,8 @@ export const DialogReducer = (state: stateDialogReducerType = initStateDialog, a
                 ...state,
                 userInfo: action.userInfo,
                 message: action.messages,
-                groupInfo: action.groupInfo
+                groupInfo: action.groupInfo,
+                faceFriend: action.faceFriend
             }
         }
         case SET_ERROR_DIALOG:
@@ -249,7 +327,37 @@ export const DialogReducer = (state: stateDialogReducerType = initStateDialog, a
         case DELETE_MESSAGE: {
             return  {
                 ...state,
-                message: state.message?.filter((mes:messageType) => mes._id !== action.idMessage)
+                message: state.message?.filter((mes:messageType) => !action.idMessage.includes(mes._id))
+            }
+        }
+        case SET_POP_UP_MESS: {
+            return {
+                ...state,
+                popUpMess: action.message
+            }
+        }
+        case SET_STATE_FORM: {
+            return {
+                ...state,
+                stateForm: action.state
+            }
+        }
+        case SET_ORIGINAL_MESSAGE: {
+            return {
+                ...state,
+                originalMessage: {...action.editMsgObj}
+            }
+        }
+        case SET_FORWARD_MENU_SET: {
+            return {
+                ...state,
+                forwardMenuSet: [...action.arrObjForMsg]
+            }
+        }
+        case SET_MODE_SELECTION: {
+            return {
+                ...state,
+                modeSelection: action.modeBool
             }
         }
     }

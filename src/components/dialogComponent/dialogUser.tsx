@@ -1,12 +1,27 @@
-import React, {FC, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from "react";
+import React, {FC, MouseEvent, useEffect, useRef, useState} from "react";
 import './dialogStyle.css'
-import {messageType, stateDialogReducerType} from "../../redux/reducers/dialogReducer";
+import {
+    messageType,
+    objectForwMsg,
+    setForwardMenuSet,
+    setModeSelection,
+    setOriginalMessage,
+    setPopUpMess,
+    setStateForm,
+    stateDialogReducerType
+} from "../../redux/reducers/dialogReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../redux/react-redux";
 import {DialogItemUser} from "./dialogItem/dialogItemUser";
 import {NotMessages} from "./notMessages/NotMessages";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import {deleteMsgThunk, getDialogInfoThunk, sendDialogMsgEditThunk, updateUserGroupListThunk} from "../../redux/thunk";
+import {
+    deleteMsgThunk,
+    getDialogInfoThunk,
+    listGroupFoundThunk,
+    sendDialogMsgEditThunk,
+    updateUserGroupListThunk
+} from "../../redux/thunk";
 import {initUserStateType} from "../../redux/reducers/userReducers";
 import {
     getListGroupFoundType,
@@ -17,23 +32,31 @@ import {
 } from "../../redux/reducers/menuListReducer";
 import {PortalElements} from "../elements/portal/portalElements";
 import {ForwardMenu} from "./forwardMenu/ForwardMenu";
-import {deleteValueLocalStorage, setValueLocalStorage} from "../../Service/Localstorage";
+import {deleteValueLocalStorage} from "../../Service/Localstorage";
 import {setting} from "../../config/config";
 import {MenuCancelEdit} from "./forwardMenu/MenuCancelEdit";
 import {drawName} from "../../Service/common";
+import {MenuSeletedMsg} from "./menuSelectedMessage/MenuSeletedMsg";
+import Picker, {IEmojiData} from 'emoji-picker-react';
+import smile from '../../static/image/pngwing.com.png'
+import clip from '../../static/image/clip.png'
+import arrow from '../../static/image/arrow_go.png'
+import {ClipMenu} from "./clipMenu/ClipMenu";
 
+const stylePickerEmoji = {
+    position: 'absolute',
+    width: '300px',
+    bottom: '50px'
+}
 
 type DialogUserType = {
     dialogInfo: stateDialogReducerType,
     sendMessage: (id: string, message: string, room: string, curId: string) => void
     readAllMsg: (idFriend: string) => void
     sendMessageForwardEvent: (id: string, message: string, room: string, curId: string, forw: string) => void
+    sendMessageForwardArrayEvent: (id: string, messages: string[], room: string, curId: string, forw: string[]) => void
 }
 
-type editMsgObjType = {
-    originalMsg: string | null
-    idMsg: string | null
-}
 
 export const DialogUser: FC<DialogUserType> = (props) => {
     const currUserInfo = useSelector<AppStateType, initUserStateType>(data => data.UserReducers)
@@ -41,87 +64,101 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         usersFound,
         groupList,
     } = useSelector<AppStateType, menuListReducerType>(data => data.menuListReducer)
-    const dialogInfo = useSelector<AppStateType, stateDialogReducerType>(data => data.DialogReducer)
+    const {
+        popUpMess,
+        originalMessage,
+        stateForm,
+        forwardMenuSet,
+        modeSelection,
+        ...dialogInfo
+    } = useSelector<AppStateType, stateDialogReducerType>(data => data.DialogReducer)
     const overFlow = useRef<HTMLDivElement>(null)
     const dialog = props.dialogInfo
     const userInfo = dialog.userInfo
     const messages = dialog.message
-    const {register, handleSubmit, setValue} = useForm({shouldUseNativeValidation: true})
+    const {register, handleSubmit, setValue, getValues} = useForm({shouldUseNativeValidation: true})
     const dispatchAC = useDispatch()
     const drawListStyle = `content_dialog ${Number(messages?.length) > 7 && 'content_full'}`
     const getUserId = userInfo._id ? userInfo._id : usersFound?.filter(us => us.username === userInfo.username)[0]['id']
-    const [popUpMess, setPopUpMess] = useState<string>('')
-    const [stateForm, setStateForm] = useState<'normal' | 'edit' | 'mforw'>('normal')
-    const [originalMessage, setOriginalMessage] = useState<editMsgObjType>({originalMsg: null, idMsg: null})
-    const [forwardMenuSet, setForwardMenuSet] = useState<string>('')
-    const [modeSelection, setModeSelection] = useState<boolean>(false)
-    const [selectedMessage, setSelectedMessage] = useState<Array<string>>([])
+    const getUsernameFromId = (userId: string) => userInfo._id === userId ? String(userInfo.username) : String(currUserInfo.username)
     let haveUnreadMsg = false
+    const [chosenEmoji, setChosenEmoji] = useState<IEmojiData>({
+        unified: '',
+        originalUnified: '',
+        names: [],
+        emoji: '',
+        activeSkinTone: '1f3fb'
+    })
+    const [stateEmoji, setStateEmoji] = useState<boolean>(false)
+    const [clipMenu, setClipMenu] = useState<boolean>(false)
 
     useEffect(() => {
-        // const scrollOptions: ScrollToOptions = {
-        //     left: 0,
-        //     top: 10000000,
-        //     behavior: 'auto'
-        // }
-        console.log('as')
-        // if (overFlow.current) overFlow.current.scrollTo(scrollOptions)
-        return () => {
-            console.log('umo')
-        }
-    }, [])
+        overFlow.current?.scrollTo(0, overFlow.current?.scrollHeight)
+    }, [userInfo, messages])
 
-    const toggleSelectMessage = (idUser:string) => {
-        if (selectedMessage.includes(idUser)) {
-            const tempSelectedUser = [...selectedMessage]
-            tempSelectedUser.splice(tempSelectedUser.indexOf(idUser), 1)
-            setSelectedMessage([...tempSelectedUser])
+    const toggleSelectMessage = (messageId: string, userId: string) => {
+        const selectedMessage = forwardMenuSet.map(msgMenu => msgMenu.messageId)
+        const userMsg = getUsernameFromId(userId)
+        if (selectedMessage.includes(messageId)) {
+            const tempSelectedUser = forwardMenuSet.filter(msgMenu => msgMenu.messageId !== messageId)
+            dispatchAC(setForwardMenuSet(tempSelectedUser))
         } else {
-            setSelectedMessage([...selectedMessage, idUser])
+            dispatchAC(setForwardMenuSet([...forwardMenuSet, {username: userMsg, messageId: messageId}]))
         }
     }
+
     const setModeSelectionHandler = (e: MouseEvent<HTMLDivElement>) => {
-        setModeSelection(!modeSelection)
-        if (modeSelection) setSelectedMessage([])
+        dispatchAC(setModeSelection(true))
+        dispatchAC(setStateForm('mforw'))
     }
 
+    const setModeSelectionOffHandler = (e: MouseEvent<HTMLDivElement>) => {
+        dispatchAC(setForwardMenuSet([]))
+        dispatchAC(setModeSelection(false))
+        dispatchAC(setStateForm('normal'))
+    }
 
-    const setPopUpHandler = (id: string) => popUpMess == id ? setPopUpMess('') : setPopUpMess(id)
+    const setPopUpHandler = (id: string) => popUpMess == id ? dispatchAC(setPopUpMess('')) : dispatchAC(setPopUpMess(id))
     const setFormRedact = (textMessage: string, idMsg: string) => {
-        setOriginalMessage({...originalMessage, originalMsg: textMessage, idMsg: idMsg})
-        setStateForm('edit')
+        dispatchAC(setOriginalMessage({...originalMessage, originalMsg: textMessage, idMsg: idMsg}))
+        dispatchAC(setStateForm('edit'))
         setValue('message', textMessage)
     }
     const setFormCancel = (e: MouseEvent<HTMLDivElement>) => {
-        setStateForm('normal')
+        dispatchAC(setStateForm('normal'))
         setValue('message', '')
     }
     const closeForwardMenu = () => {
         deleteValueLocalStorage(setting.nameForwardVariable)
-        setForwardMenuSet('')
+        dispatchAC(setForwardMenuSet([]))
+        dispatchAC(setStateForm('normal'))
+        dispatchAC(setModeSelection(false))
     }
-
-
-    const deleteMessageCb = (idMessage: string) => dispatchAC(deleteMsgThunk(idMessage))
-
-
+    const deleteMessageCb = (idMessage: string) => dispatchAC(deleteMsgThunk([idMessage]))
     const drawForwardMenu = (msg: string, idUser: string) => {
-        let username = ''
-        if (currUserInfo.id === idUser) {
-            username = String(currUserInfo.username)
-        } else {
-            username = String(groupList?.filter((group: getListGroupFoundType) => group.friend.id === idUser)[0].friend.username)
-        }
-        setValueLocalStorage(setting.nameForwardVariable, username)
-        setForwardMenuSet(msg)
+        const username = getUsernameFromId(idUser)
+        dispatchAC(setForwardMenuSet([...forwardMenuSet, {username: username, messageId: msg}]))
     }
+    const drawForwardMenuSendArray: SubmitHandler<FieldValues> = () => dispatchAC(setStateForm('normal'))
+
+
     const drawOriginalMessage = () => {
         if (stateForm == 'edit') {
-            return <MenuCancelEdit setFormCancel={setFormCancel} originalMessage={String(originalMessage.originalMsg)} />
+            return <MenuCancelEdit setFormCancel={setFormCancel} originalMessage={String(originalMessage.originalMsg)}/>
         } else if (stateForm == 'mforw') {
-            return (
-                <div>sdad</div>
-            )
+            return <MenuSeletedMsg
+                forwardMenuSet={forwardMenuSet}
+            />
+        }
+    }
+
+    const getCbFromSubmitMessage = () => {
+        if (stateForm === 'normal') {
+            return onSubmitForm
+        } else if (stateForm === 'edit') {
+            return onSubmitFormRedact
+        } else {
+            return drawForwardMenuSendArray
         }
     }
 
@@ -132,6 +169,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
             dialog.groupInfo?.name ? dialog.groupInfo.name : '',
             currUserInfo.id ? currUserInfo.id : ''
         )
+        setStateEmoji(false)
         setValue("message", '')
         dispatchAC(setModeListAC("group"))
         dispatchAC(selectUser(getUserId ? getUserId : ''))
@@ -140,10 +178,41 @@ export const DialogUser: FC<DialogUserType> = (props) => {
 
     const onSubmitFormRedact: SubmitHandler<FieldValues> = (data) => {
         const idMess = originalMessage.idMsg
-        setStateForm('normal')
+        dispatchAC(setStateForm('normal'))
         setValue("message", '')
         dispatchAC(sendDialogMsgEditThunk({idMessage: String(idMess), editMessage: data.message}))
         dispatchAC(updateUserGroupListThunk([{user: userInfo.username}]))
+    }
+
+    const sendForwardMsg = (selectedUser: string[]) => {
+        const filtred = groupList?.filter((group: getListGroupFoundType) => selectedUser.includes(group.friend.id))
+        const tempArray = forwardMenuSet.map((msgArr: objectForwMsg) => msgArr.messageId)
+        const usernameArray = forwardMenuSet.map((msgArr: objectForwMsg) => msgArr.username)
+        const arrayMessageSend = messages?.filter(msg => tempArray.includes(msg._id)).map(msg => msg.text)
+        const msgUserArrayForw = String(currUserInfo.id) + getValues('message')
+        if (getValues('message')) arrayMessageSend?.push(msgUserArrayForw)
+        filtred?.map((group: getListGroupFoundType) => {
+            props.sendMessageForwardArrayEvent(
+                group.friend.id,
+                arrayMessageSend ? arrayMessageSend : [],
+                group.name,
+                String(currUserInfo.id),
+                usernameArray
+            )
+        })
+        closeForwardMenu()
+        dispatchAC(setStateForm('normal'))
+        dispatchAC(setForwardMenuSet([]))
+        dispatchAC(setModeSelection(false))
+        dispatchAC(listGroupFoundThunk([]))
+        dispatchAC(getDialogInfoThunk(String(userInfo.username)))
+        setValue('message', '')
+    }
+
+    const onPressEnterSendMsg = (e: React.KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter') {
+            handleSubmit(getCbFromSubmitMessage())
+        }
     }
 
 
@@ -152,21 +221,26 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         const readMsg = msgCurrentFriend?.filter((msg: messageType) => {
             return isRead ? msg.whoRead.includes(String(currUserInfo.id)) : !msg.whoRead.includes(String(currUserInfo.id))
         })
-        return readMsg?.map((mes, index) => {
+        const selectedMessage = forwardMenuSet.map(msgMenu => msgMenu.messageId)
+        return readMsg?.map((mes, index, currArray) => {
+            const prevMessRepeatUser = mes.userId === currArray[index - 1]?.userId
+            const isFriend = !(mes.userId === currUserInfo.id)
+            const avatar = isFriend ? dialog.faceFriend : currUserInfo.cutImage
             return (
                 <DialogItemUser
+                    prevMessRepeatUser={prevMessRepeatUser}
                     key={index}
                     drawForwardMenu={drawForwardMenu}
-                    friendName={String(userInfo.username)}
                     deleteMessageCb={deleteMessageCb}
                     message={mes}
                     enabledMenu={mes._id == popUpMess}
                     setPopUpHandler={setPopUpHandler}
                     setFormRedact={setFormRedact}
-                    friendMessage={!(mes.userId === currUserInfo.id)}
+                    friendMessage={isFriend}
                     modeSelection={modeSelection}
                     messageSelect={selectedMessage.includes(mes._id)}
                     toggleSelectMessage={toggleSelectMessage}
+                    avatar={avatar}
                 />
             )
         })
@@ -194,7 +268,7 @@ export const DialogUser: FC<DialogUserType> = (props) => {
 
     const onClickHandler = (e: MouseEvent<HTMLDivElement>) => {
         if (popUpMess != '') {
-            setPopUpMess('')
+            dispatchAC(setPopUpMess(''))
         }
         if (haveUnreadMsg) {
             props.readAllMsg(String(userInfo._id))
@@ -202,19 +276,44 @@ export const DialogUser: FC<DialogUserType> = (props) => {
         }
     }
 
+    const onClickDeleteAllMsg = (e: MouseEvent<HTMLButtonElement>) => {
+        const idMessages = forwardMenuSet.map(msg => msg.messageId)
+        dispatchAC(deleteMsgThunk(idMessages))
+        dispatchAC(setForwardMenuSet([]))
+        dispatchAC(setModeSelection(false))
+        dispatchAC(setStateForm('normal'))
+    }
+
+    const toggleStateEmoji = (e: MouseEvent<HTMLImageElement>) => setStateEmoji(!stateEmoji)
+    const onClickEmoji = (data:IEmojiData) => {
+        setChosenEmoji(data)
+        // setValue("message", getValues("message") + chosenEmoji.emoji)
+        setValue("message", 'U+' + data.unified)
+    }
     return (
         <div className={'dialog_user'}>
             <div className="header_dialog">
-                <div className="userinfo_dialog"><b>{drawName(String(userInfo.username), userInfo.firstName, userInfo.lastName)}</b></div>
+                <div className="userinfo_dialog">
+                    <b>{drawName(String(userInfo.username), userInfo.firstName, userInfo.lastName)}</b></div>
                 <div className="menu_user_dialog">
                     <button>Menu</button>
-                    <div
-                        title='Выделить несколько'
-                        className='btn_select_msgs'
-                        onClick={setModeSelectionHandler}
-                    >
-                        <i>&#128504;</i><i>&#128504;</i><i>&#128504;</i>
-                    </div>
+                    {
+                        modeSelection ?
+                            <div
+                                title='Убрать выделение'
+                                className='btn_select_msgs_off'
+                                onClick={setModeSelectionOffHandler}
+                            >
+                                <i>&#128504;</i><i>&#128504;</i><i>&#128504;</i>
+                            </div> :
+                            <div
+                                title='Выделить несколько'
+                                className='btn_select_msgs'
+                                onClick={setModeSelectionHandler}
+                            >
+                                <i>&#128504;</i><i>&#128504;</i><i>&#128504;</i>
+                            </div>
+                    }
                 </div>
             </div>
             {messages ?
@@ -226,28 +325,54 @@ export const DialogUser: FC<DialogUserType> = (props) => {
             }
             <div className="message_crud_dialog">
                 <form className="form_dialog"
-                      onSubmit={handleSubmit(stateForm == 'normal' ? onSubmitForm : onSubmitFormRedact)}>
+                      onSubmit={handleSubmit(getCbFromSubmitMessage())}>
+                    <img
+                        onClick={toggleStateEmoji}
+                        className='smile_btn_select_emoji'
+                        src={clip}
+                    />
                     <input
                         autoFocus
                         {...register('message')}
                         type="text"
                         className="text_enter_dialog"
+                        placeholder={setting.textEmptyMessageDialog}
                     />
-                    <input type={'submit'}
-                           className="btn_send_msg_dia"
-                           value={stateForm == 'normal' ? 'Отправить' : 'Редактировать'}
+                    <img
+                        onClick={toggleStateEmoji}
+                        className='smile_btn_select_emoji'
+                        src={smile}
                     />
+                    {
+                        stateEmoji && <Picker
+                            onEmojiClick={(event, data) => onClickEmoji(data)}
+                            skinTone='1f3fb'
+                            pickerStyle={stylePickerEmoji}
+                        />
+                    }
+                    {
+                        stateForm === 'mforw' &&
+                        <button
+                            className='del_all_btn'
+                            onClick={onClickDeleteAllMsg}
+                        >Удалить все</button>
+                    }
                 </form>
             </div>
-            {forwardMenuSet &&
+            {forwardMenuSet.length && stateForm !== 'mforw' &&
                 <PortalElements>
                     <ForwardMenu
-                        currentUserId={String(currUserInfo.id)}
+                        sendForwardMsg={sendForwardMsg}
                         groupList={groupList ? groupList : []}
-                        message={forwardMenuSet}
-                        sendMessageForwardEvent={props.sendMessageForwardEvent}
+                        forwardMenuSet={forwardMenuSet}
                         closeForwardMenu={closeForwardMenu}
-                        usernameCurrDlg={String(userInfo.username)}
+                        userMsg={getValues('message')}
+                    />
+                </PortalElements>
+            }
+            {clipMenu &&
+                <PortalElements>
+                    <ClipMenu
                     />
                 </PortalElements>
             }

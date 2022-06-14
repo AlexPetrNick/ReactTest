@@ -13,6 +13,7 @@
     "@types/react-redux": "^7.1.23",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-transition-group": "^4.4.4",
+    "emoji-picker-react": "^3.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "exif-js": "^2.3.0",
     "file-saver": "^2.0.5",

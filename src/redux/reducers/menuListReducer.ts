@@ -189,7 +189,6 @@ export const menuListReducer = (state: menuListReducerType = initTypeMenuListRed
             }
         }
         case UPDATE_MSG_FROM_USER: {
-            console.log(action)
             return {
                 ...state,
                 groupList: state.groupList?.map((elem:getListGroupFoundType) => {

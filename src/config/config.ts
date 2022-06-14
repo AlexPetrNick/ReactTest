@@ -12,7 +12,9 @@ export const setting: settingType = {
     "socketIoAdress": "http://localhost:3000/socket.io/socket.io.js",
     "timeSeeErrorMsg": "4000",
     "lenSymbFromSearch": "2",
-    "nameForwardVariable": "forwarder"
+    "nameForwardVariable": "forwarder",
+    "textEmptyClipItems": "В данной группе отсутствуют файлы",
+    "textEmptyMessageDialog": "Введите сообщение"
 }
 
 

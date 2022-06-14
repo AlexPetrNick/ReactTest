@@ -48,7 +48,6 @@ export const useChat = (roomsId, idUser) => {
                 "__v": 0
             }
             const {__v, ...msgList} = newMsg
-            console.log(id, senderId, talkId, msg, getId, forwarded)
             dispatchAC(addMsgAfterEvent(newMsg))
             dispatchAC(updateMsgFromUser(getId, msgList))
             if (senderId !== idUser) dispatchAC(incrementUnreadMsg(senderId))
@@ -76,6 +75,10 @@ export const useChat = (roomsId, idUser) => {
         socketRef.current.emit('msg:new_forward', id, message, room, curId, forw)
     }
 
+    const sendMessageForwardArrayEvent = (id, messages, room, curId, forw) => {
+        socketRef.current.emit('msg:new_forward_many', id, messages, room, curId, forw)
+    }
+
     const seeMessage = (idMessage, curId) => {
         socketRef.current.emit('msg:see', idMessage, curId)
     }
@@ -90,5 +93,11 @@ export const useChat = (roomsId, idUser) => {
     }
 
 
-    return {seeMessage, sendMessageEvent, readAllMsg, sendMessageForwardEvent}
+    return {
+        seeMessage,
+        sendMessageEvent,
+        readAllMsg,
+        sendMessageForwardEvent,
+        sendMessageForwardArrayEvent
+    }
 }

@@ -54,10 +54,10 @@ export const sendMessageEdit = (data:dataDialogSendMsgEditType) => {
 }
 
 
-export const deleteMessage = (idMessage: string) => {
+export const deleteMessage = (idMessages: string[]) => {
     return fetch(`${serverDns}/dialog/delete_message`, {
         method: "DELETE",
-        body: JSON.stringify({idMessage:idMessage}),
+        body: JSON.stringify({idMessage:idMessages}),
         mode:"cors",
         headers: {
             'Content-Type': 'application/json',
